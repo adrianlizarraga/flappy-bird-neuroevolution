@@ -15,8 +15,6 @@ find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
 ############################################################
 # Create excutable and link libraries
 ############################################################
-
-# XOR example
 add_executable(flappy
     flappy.cpp
 )
