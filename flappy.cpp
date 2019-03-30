@@ -1,10 +1,9 @@
+#include "MLPNetwork.h"
+#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
-#include <SFML/Graphics.hpp>
-#include "MLPNetwork.h"
 
 using namespace std;
-
 
 int main() {
     cout << "Flappy!" << endl;
@@ -16,11 +15,9 @@ int main() {
     sf::CircleShape shape(100.f);
     shape.setFillColor(sf::Color::Green);
 
-    while (window.isOpen())
-    {
+    while (window.isOpen()) {
         sf::Event event;
-        while (window.pollEvent(event))
-        {
+        while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
