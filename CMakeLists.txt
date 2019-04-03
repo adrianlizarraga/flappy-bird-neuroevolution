@@ -20,6 +20,7 @@ add_executable(flappy
     src/Bird.cpp
     src/Ground.cpp
     src/Background.cpp
+    src/Pipe.cpp
 )
 
 target_include_directories(flappy
