@@ -43,7 +43,7 @@ void Bird::flap() {
 void Bird::update(float deltaT) {
     this->sprite.setRotation(0);
     bool hitGround = this->intersects(*this->_ground);
-    bool hitCeiling = this->boundingBox().top < this->_background->boundingBox().top; //!this->_background->contains(*this) && !hitGround;
+    bool hitCeiling = this->boundingBox().top < this->_background->boundingBox().top;
     
     // Force velocity to zero if bird touches ceiling.
     if (hitCeiling) {
