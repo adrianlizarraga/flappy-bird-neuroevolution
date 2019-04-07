@@ -48,7 +48,7 @@ int main() {
     sf::Font& font = assetManager.getFont("data/trench.ttf");
     sf::Text scoreLabel;
     scoreLabel.setFont(font);
-    scoreLabel.setString("Score ");
+    scoreLabel.setString("Score: 0");
     scoreLabel.setCharacterSize(28);
     scoreLabel.setFillColor(sf::Color(219, 111, 57));
     scoreLabel.setOutlineThickness(1.0f);
@@ -66,6 +66,8 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(width, height), "Flappy bird: live, die, and repeat");
     sf::Clock clock;
     int frame = 0;
+    int pipeNumber = 0;
+    int score = 0;
 
     // Draw loop @ 120fps
     window.setFramerateLimit(120);
@@ -80,6 +82,9 @@ int main() {
                 } else if (event.key.code == sf::Keyboard::R) {
                     reset(bird, pipes);
                     frame = 0;
+                    score = 0;
+                    pipeNumber = 0;
+                    scoreLabel.setString("Score: 0");
                 } else if (event.key.code == sf::Keyboard::Escape) {
                     window.close();
                 }
@@ -92,7 +97,10 @@ int main() {
             float pipeHeight = height - groundHeight;
             float gapY = random(128, int(pipeHeight - 200));
             float gapHeight = random(64, 128);
-            pipes.push_back(PipePair(sf::FloatRect(width, 0.0f, pipeWidth, pipeHeight), gapY, gapHeight, assetManager));
+            
+            pipes.push_back(PipePair(pipeNumber, sf::FloatRect(width, 0.0f, pipeWidth, pipeHeight), gapY, gapHeight, assetManager));
+
+            pipeNumber++;
         }
 
         float elapsed = clock.restart().asSeconds();
@@ -104,7 +112,18 @@ int main() {
         for (auto &pipe : pipes) {
             pipe.update(elapsed);
 
-            collided = collided || pipe.intersects(bird);
+            bool intersects = pipe.intersects(bird);
+            collided = collided || intersects;
+
+            if (!intersects && 
+                (bird.getPosition().x > pipe.getX() + pipe.getWidth())) {
+                int newscore = std::max(score, pipe.getNumber() + 1);
+
+                if (score != newscore) {
+                    score = newscore;
+                    scoreLabel.setString("Score: " + std::to_string(score));
+                }
+            }
         }
 
         // Draw
@@ -127,6 +146,9 @@ int main() {
         if (collided) {
             reset(bird, pipes);
             frame = 0;
+            score = 0;
+            pipeNumber = 0;
+            scoreLabel.setString("Score: 0");
         } else {
             frame++;
         }

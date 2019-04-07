@@ -30,6 +30,8 @@ public:
          float lift = 1250.0f);
     ~Bird();
 
+    sf::Vector2f getPosition() const;
+
     sf::FloatRect getCombinedBoundingBox() const;
     std::vector<sf::FloatRect> getBoundingBoxes() const;
 

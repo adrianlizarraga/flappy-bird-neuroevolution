@@ -34,6 +34,10 @@ void Bird::reset(float x, float y) {
     this->sprite.setPosition(x, y);
 }
 
+sf::Vector2f Bird::getPosition() const {
+    return this->position;
+}
+
 sf::FloatRect Bird::getCombinedBoundingBox() const {
     return this->sprite.getGlobalBounds();
 }

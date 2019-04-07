@@ -7,7 +7,7 @@ class Pipe : public Renderable {
   private:
     sf::Sprite headSprite;
     sf::Sprite bodySprite;
-    float vx;
+    float x, vx, width;
     bool upsidedown;
     bool debug = false;
 
@@ -15,7 +15,10 @@ class Pipe : public Renderable {
     Pipe(sf::FloatRect rect, AssetManager& assetManager, bool upsidedown = false, float velocityX = -100.0f);
 
     ~Pipe();
-
+    
+    float getX() const;
+    float getWidth() const;
+    
     sf::FloatRect getCombinedBoundingBox() const;
     std::vector<sf::FloatRect> getBoundingBoxes() const;
 
@@ -27,10 +30,15 @@ class PipePair : public Renderable {
   private:
     Pipe topPipe, bottomPipe;
     float gapY, gapHeight;
+    int number;
 
   public:
-    PipePair(sf::FloatRect rect, float gapY, float gapHeight, AssetManager& assetManager, float velocityX = -100.0f);
+    PipePair(int number, sf::FloatRect rect, float gapY, float gapHeight, AssetManager& assetManager, float velocityX = -100.0f);
     ~PipePair();
+
+    int getNumber() const;
+    float getX() const;
+    float getWidth() const;
 
     sf::FloatRect getGapRect() const;
     sf::FloatRect getCombinedBoundingBox() const;

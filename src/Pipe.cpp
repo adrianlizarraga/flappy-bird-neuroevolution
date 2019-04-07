@@ -4,7 +4,7 @@
 ////////////////////////////////////////////
 // Pipe
 ///////////////////////////////////////////
-Pipe::Pipe(sf::FloatRect rect, AssetManager &assetManager, bool upsidedown, float velocityX) : upsidedown(upsidedown), vx(velocityX) {
+Pipe::Pipe(sf::FloatRect rect, AssetManager &assetManager, bool upsidedown, float velocityX) : x(rect.left), vx(velocityX), width(rect.width), upsidedown(upsidedown) {
 
     sf::Texture &headTexture = assetManager.getTexture("data/pipetop64x32.png");
     sf::Texture &bodyTexture = assetManager.getTexture("data/pipebody60x32.png", false, true);
@@ -42,6 +42,16 @@ Pipe::Pipe(sf::FloatRect rect, AssetManager &assetManager, bool upsidedown, floa
 Pipe::~Pipe() {}
 
 // ------------------------------------------------------------
+float Pipe::getX() const {
+    return this->x;
+}
+
+// ------------------------------------------------------------
+float Pipe::getWidth() const {
+    return this->width;
+}
+
+// ------------------------------------------------------------
 sf::FloatRect Pipe::getCombinedBoundingBox() const {
     return combineBoundingBoxes(this->getBoundingBoxes()[0], this->getBoundingBoxes()[1]);
 }
@@ -57,6 +67,9 @@ std::vector<sf::FloatRect> Pipe::getBoundingBoxes() const {
 // ------------------------------------------------------------
 void Pipe::update(float deltaT) {
     float deltaX = this->vx * deltaT;
+
+    // Cache x so we don't have to always retrieve bounding box.
+    this->x += deltaX;
 
     this->headSprite.move(deltaX, 0.0f);
     this->bodySprite.move(deltaX, 0.0f);
@@ -85,14 +98,31 @@ void Pipe::draw(sf::RenderWindow &window) const {
 // PipePair
 ///////////////////////////////////////////
 
-PipePair::PipePair(sf::FloatRect rect, float gapY, float gapHeight, AssetManager &assetManager, float velocityX)
-    : gapY(gapY), gapHeight(gapHeight),
+PipePair::PipePair(int number, sf::FloatRect rect, float gapY, float gapHeight, AssetManager &assetManager, float velocityX)
+    : number(number), gapY(gapY), gapHeight(gapHeight),
       topPipe(sf::FloatRect(rect.left, rect.top, rect.width, gapY - rect.top), assetManager, true, velocityX),
       bottomPipe(sf::FloatRect(rect.left, gapY + gapHeight, rect.width, rect.top + rect.height - (gapY + gapHeight)), assetManager, false,
                  velocityX) {}
 
+// ------------------------------------------------------------
 PipePair::~PipePair() {}
 
+// ------------------------------------------------------------
+int PipePair::getNumber() const {
+    return this->number;
+}
+
+// ------------------------------------------------------------
+float PipePair::getX() const {
+    return this->topPipe.getX();
+}
+
+// ------------------------------------------------------------
+float PipePair::getWidth() const {
+    return this->topPipe.getWidth();
+}
+
+// ------------------------------------------------------------
 sf::FloatRect PipePair::getCombinedBoundingBox() const {
     sf::FloatRect topBbox = this->topPipe.getCombinedBoundingBox();
     sf::FloatRect bottomBbox = this->bottomPipe.getCombinedBoundingBox();
@@ -100,12 +130,14 @@ sf::FloatRect PipePair::getCombinedBoundingBox() const {
     return combineBoundingBoxes(topBbox, bottomBbox);
 }
 
+// ------------------------------------------------------------
 sf::FloatRect PipePair::getGapRect() const {
     sf::FloatRect bbox = this->getCombinedBoundingBox();
 
     return sf::FloatRect(bbox.left, this->gapY, bbox.width, this->gapHeight);
 }
 
+// ------------------------------------------------------------
 std::vector<sf::FloatRect> PipePair::getBoundingBoxes() const {
     std::vector<sf::FloatRect> topBBoxes = this->topPipe.getBoundingBoxes();
     std::vector<sf::FloatRect> botBBoxes = this->bottomPipe.getBoundingBoxes();
@@ -122,11 +154,13 @@ std::vector<sf::FloatRect> PipePair::getBoundingBoxes() const {
     return bboxes;
 }
 
+// ------------------------------------------------------------
 void PipePair::update(float deltaT) {
     this->topPipe.update(deltaT);
     this->bottomPipe.update(deltaT);
 }
 
+// ------------------------------------------------------------
 void PipePair::draw(sf::RenderWindow &window) const {
     this->topPipe.draw(window);
     this->bottomPipe.draw(window);
