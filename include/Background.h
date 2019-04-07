@@ -1,13 +1,15 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include "Renderable.h"
+#include "AssetManager.h"
+#include <SFML/Graphics.hpp>
+#include <memory>
 
 class Background: public Renderable {
 private:
     sf::Sprite sprite;
 
 public:
-    Background(float x, float y, int width, int height, const sf::Texture& texture);
+    Background(sf::FloatRect rect, AssetManager& assetManager);
     ~Background();
     
     sf::FloatRect getCombinedBoundingBox() const;

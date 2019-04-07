@@ -1,9 +1,12 @@
 #include "Background.h"
 
-Background::Background(float x, float y, int width, int height, const sf::Texture& texture){
+Background::Background(sf::FloatRect rect, AssetManager& assetManager){
+    sf::Texture& texture = assetManager.getTexture("data/background300x472.png", false, true);
+    
     this->sprite.setTexture(texture);
-    this->sprite.setTextureRect(sf::IntRect(0, 0, width, height));
-    this->sprite.setPosition(x, y);
+    this->sprite.setTextureRect(sf::IntRect(0, 0, rect.width, texture.getSize().y));
+    this->sprite.setPosition(rect.left, rect.top);
+    this->sprite.setScale(1.0f, rect.height / texture.getSize().y);
 }
 
 Background::~Background() {

@@ -1,3 +1,4 @@
+#include "AssetManager.h"
 #include "Background.h"
 #include "Bird.h"
 #include "Ground.h"
@@ -8,6 +9,7 @@
 #include <ctime>
 #include <iostream>
 #include <list>
+#include <memory>
 
 using namespace std;
 
@@ -41,49 +43,31 @@ int main() {
 
     int width = 1200;
     int height = 600;
+    AssetManager assetManager;
 
-    sf::Texture texture;
-    if (!texture.loadFromFile("data/bird34x24.png")) {
-        cerr << "Failed to load bird texture" << endl;
-        return -1;
-    }
+    sf::Font& font = assetManager.getFont("data/trench.ttf");
+    sf::Text scoreLabel;
+    scoreLabel.setFont(font);
+    scoreLabel.setString("Score ");
+    scoreLabel.setCharacterSize(28);
+    scoreLabel.setFillColor(sf::Color(219, 111, 57));
+    scoreLabel.setOutlineThickness(1.0f);
+    scoreLabel.setStyle(sf::Text::Bold);
+    scoreLabel.setPosition(sf::Vector2f(width - 128, 0));
 
-    sf::Texture groundTexture;
-    if (!groundTexture.loadFromFile("data/ground64x128.png")) {
-        cerr << "Failed to load ground texture" << endl;
-        return -1;
-    }
-    groundTexture.setRepeated(true);
-
-    sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("data/background300x472.png")) {
-        cerr << "Failed to load background texture" << endl;
-        return -1;
-    }
-    backgroundTexture.setRepeated(true);
-
-    sf::Texture pipeHeadTexture;
-    if (!pipeHeadTexture.loadFromFile("data/pipetop64x32.png")) {
-        cerr << "Failed to load pipe top texture" << endl;
-        return -1;
-    }
-
-    sf::Texture pipeBodyTexture;
-    if (!pipeBodyTexture.loadFromFile("data/pipebody60x32.png")) {
-        cerr << "Failed to load pipe body texture" << endl;
-        return -1;
-    }
-    pipeBodyTexture.setRepeated(true);
-
-    Ground ground(0.0f, height - groundTexture.getSize().y, width, groundTexture.getSize().y, groundTexture);
-    Background background(0.0f, 0.0f, width, backgroundTexture.getSize().y, backgroundTexture);
-    Bird bird(200, 150, texture, &ground, &background);
+    // Create renderables
+    float groundHeight = 128.0f;
+    float backgroundHeight = 472.0f;
+    Ground ground(sf::FloatRect(0.0f, height - groundHeight, width, groundHeight), assetManager);
+    Background background(sf::FloatRect(0.0f, 0.0f, width, backgroundHeight), assetManager);
+    Bird bird(200, 150, assetManager, &ground, &background);
     std::list<PipePair> pipes;
 
     sf::RenderWindow window(sf::VideoMode(width, height), "Flappy bird: live, die, and repeat");
     sf::Clock clock;
     int frame = 0;
 
+    // Draw loop @ 120fps
     window.setFramerateLimit(120);
     while (window.isOpen()) {
         sf::Event event;
@@ -95,23 +79,25 @@ int main() {
                     bird.flap();
                 } else if (event.key.code == sf::Keyboard::R) {
                     reset(bird, pipes);
+                    frame = 0;
                 } else if (event.key.code == sf::Keyboard::Escape) {
                     window.close();
                 }
             }
         }
 
+        // Add a new pipe every few frames
         if (frame % 400 == 0) {
             float pipeWidth = 64.0f * random(2, 4) / 2.0f;
-            float pipeHeight = height - groundTexture.getSize().y;
+            float pipeHeight = height - groundHeight;
             float gapY = random(128, int(pipeHeight - 200));
             float gapHeight = random(64, 128);
-            pipes.push_back(PipePair(sf::FloatRect(width, 0.0f, pipeWidth, pipeHeight), gapY, gapHeight, pipeHeadTexture, pipeBodyTexture));
+            pipes.push_back(PipePair(sf::FloatRect(width, 0.0f, pipeWidth, pipeHeight), gapY, gapHeight, assetManager));
         }
 
         float elapsed = clock.restart().asSeconds();
-        bird.debug = false;
 
+        // Update renderables
         bird.update(elapsed);
 
         bool collided = false;
@@ -121,6 +107,7 @@ int main() {
             collided = collided || pipe.intersects(bird);
         }
 
+        // Draw
         window.clear(sf::Color::White);
         background.draw(window);
         bird.draw(window);
@@ -130,8 +117,11 @@ int main() {
             pipe.draw(window);
         }
 
+        window.draw(scoreLabel);
+
         window.display();
 
+        // Clean up and handle collision
         cleanupPipes(pipes);
 
         if (collided) {

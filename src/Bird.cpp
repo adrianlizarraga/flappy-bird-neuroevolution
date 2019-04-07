@@ -4,12 +4,14 @@
 #include <iostream>
 
 Bird::Bird(float x, float y, 
-           const sf::Texture& texture,
+           AssetManager& assetManager,
            const Ground* ground,
            const Background* background,
            float mass, float lift): 
     position(x, y), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f), 
     mass(mass), lift(lift), _ground(ground), _background(background) {
+    
+    sf::Texture& texture = assetManager.getTexture("data/bird34x24.png");
     sf::Vector2u size = texture.getSize();
     
     this->sprite.setPosition(x, y);

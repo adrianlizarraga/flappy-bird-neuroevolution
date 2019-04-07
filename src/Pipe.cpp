@@ -4,8 +4,10 @@
 ////////////////////////////////////////////
 // Pipe
 ///////////////////////////////////////////
-Pipe::Pipe(sf::FloatRect rect, const sf::Texture &headTexture, const sf::Texture &bodyTexture, bool upsidedown, float velocityX)
-    : upsidedown(upsidedown), vx(velocityX) {
+Pipe::Pipe(sf::FloatRect rect, AssetManager &assetManager, bool upsidedown, float velocityX) : upsidedown(upsidedown), vx(velocityX) {
+
+    sf::Texture &headTexture = assetManager.getTexture("data/pipetop64x32.png");
+    sf::Texture &bodyTexture = assetManager.getTexture("data/pipebody60x32.png", false, true);
 
     sf::Vector2u headTextureSize = headTexture.getSize();
     sf::Vector2u bodyTextureSize = bodyTexture.getSize();
@@ -83,12 +85,11 @@ void Pipe::draw(sf::RenderWindow &window) const {
 // PipePair
 ///////////////////////////////////////////
 
-PipePair::PipePair(sf::FloatRect rect, float gapY, float gapHeight, const sf::Texture &headTexture, const sf::Texture &bodyTexture,
-                   float velocityX)
+PipePair::PipePair(sf::FloatRect rect, float gapY, float gapHeight, AssetManager &assetManager, float velocityX)
     : gapY(gapY), gapHeight(gapHeight),
-      topPipe(sf::FloatRect(rect.left, rect.top, rect.width, gapY - rect.top), headTexture, bodyTexture, true, velocityX),
-      bottomPipe(sf::FloatRect(rect.left, gapY + gapHeight, rect.width, rect.top + rect.height - (gapY + gapHeight)), headTexture,
-                 bodyTexture, false, velocityX) {}
+      topPipe(sf::FloatRect(rect.left, rect.top, rect.width, gapY - rect.top), assetManager, true, velocityX),
+      bottomPipe(sf::FloatRect(rect.left, gapY + gapHeight, rect.width, rect.top + rect.height - (gapY + gapHeight)), assetManager, false,
+                 velocityX) {}
 
 PipePair::~PipePair() {}
 
@@ -110,11 +111,11 @@ std::vector<sf::FloatRect> PipePair::getBoundingBoxes() const {
     std::vector<sf::FloatRect> botBBoxes = this->bottomPipe.getBoundingBoxes();
     std::vector<sf::FloatRect> bboxes;
 
-    for (auto& bbox : topBBoxes) {
+    for (auto &bbox : topBBoxes) {
         bboxes.push_back(bbox);
     }
 
-    for (auto& bbox : botBBoxes) {
+    for (auto &bbox : botBBoxes) {
         bboxes.push_back(bbox);
     }
 

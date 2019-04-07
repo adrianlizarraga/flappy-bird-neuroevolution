@@ -1,10 +1,12 @@
 #include "Ground.h"
 
-Ground::Ground(float x, float y, int width, int height, const sf::Texture& texture,
-             float elasticity): elasticity(elasticity) {
+Ground::Ground(sf::FloatRect rect, AssetManager& assetManager, float elasticity): elasticity(elasticity) {
+    sf::Texture& texture = assetManager.getTexture("data/ground64x128.png", false, true);
+    
     this->sprite.setTexture(texture);
-    this->sprite.setTextureRect(sf::IntRect(0, 0, width, height));
-    this->sprite.setPosition(x, y);
+    this->sprite.setTextureRect(sf::IntRect(0, 0, rect.width, texture.getSize().y));
+    this->sprite.setPosition(rect.left, rect.top);
+    this->sprite.setScale(1.0f, rect.height / texture.getSize().y);
 }
 
 Ground::~Ground() {

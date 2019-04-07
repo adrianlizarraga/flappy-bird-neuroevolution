@@ -1,4 +1,5 @@
 #pragma once
+#include "AssetManager.h"
 #include "Renderable.h"
 #include <SFML/Graphics.hpp>
 
@@ -11,8 +12,7 @@ class Pipe : public Renderable {
     bool debug = false;
 
   public:
-    Pipe(sf::FloatRect rect, const sf::Texture &headTexture, const sf::Texture &bodyTexture, bool upsidedown = false,
-         float velocityX = -100.0f);
+    Pipe(sf::FloatRect rect, AssetManager& assetManager, bool upsidedown = false, float velocityX = -100.0f);
 
     ~Pipe();
 
@@ -29,8 +29,7 @@ class PipePair : public Renderable {
     float gapY, gapHeight;
 
   public:
-    PipePair(sf::FloatRect rect, float gapY, float gapHeight, const sf::Texture &headTexture, const sf::Texture &bodyTexture,
-             float velocityX = -100.0f);
+    PipePair(sf::FloatRect rect, float gapY, float gapHeight, AssetManager& assetManager, float velocityX = -100.0f);
     ~PipePair();
 
     sf::FloatRect getGapRect() const;

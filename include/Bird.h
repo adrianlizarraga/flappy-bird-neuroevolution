@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include "Renderable.h"
+#include "AssetManager.h"
 
 class Ground;
 class Background;
@@ -22,7 +23,7 @@ private:
 
 public:
     Bird(float x, float y, 
-         const sf::Texture& texture,
+         AssetManager& assetManager,
          const Ground* ground,
          const Background* background,
          float mass = 0.05f, 

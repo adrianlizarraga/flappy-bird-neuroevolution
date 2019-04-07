@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Renderable.h"
+#include "AssetManager.h"
 
 class Ground: public Renderable {
 private:
@@ -8,8 +9,7 @@ private:
     float elasticity;
 
 public:
-    Ground(float x, float y, int width, int height, const sf::Texture& texture,
-           float elasticity = 0.7f);
+    Ground(sf::FloatRect rect, AssetManager& assetManager, float elasticity = 0.7f);
     ~Ground();
     
     sf::FloatRect getCombinedBoundingBox() const;
