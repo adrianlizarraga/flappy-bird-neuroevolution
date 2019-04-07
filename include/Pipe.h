@@ -16,7 +16,8 @@ class Pipe : public Renderable {
 
     ~Pipe();
 
-    sf::FloatRect boundingBox() const;
+    sf::FloatRect getCombinedBoundingBox() const;
+    std::vector<sf::FloatRect> getBoundingBoxes() const;
 
     void update(float deltaT);
     void draw(sf::RenderWindow &window) const;
@@ -26,16 +27,18 @@ class PipePair : public Renderable {
   private:
     Pipe topPipe, bottomPipe;
     float gapY, gapHeight;
-    bool debug = false;
 
   public:
     PipePair(sf::FloatRect rect, float gapY, float gapHeight, const sf::Texture &headTexture, const sf::Texture &bodyTexture,
              float velocityX = -100.0f);
     ~PipePair();
 
-    sf::FloatRect boundingBox() const;
     sf::FloatRect getGapRect() const;
+    sf::FloatRect getCombinedBoundingBox() const;
+    std::vector<sf::FloatRect> getBoundingBoxes() const;
 
     void update(float deltaT);
     void draw(sf::RenderWindow &window) const;
+
+    bool debug = false;
 };

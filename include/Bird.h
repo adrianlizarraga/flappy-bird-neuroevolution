@@ -16,7 +16,6 @@ private:
     float lift;
     const float g = 600.0f;
     const float b = 0.96f;
-    const bool debug = false;
     bool _flap;
     const Ground* _ground;
     const Background* _background;
@@ -30,10 +29,13 @@ public:
          float lift = 1250.0f);
     ~Bird();
 
-    sf::FloatRect boundingBox() const;
+    sf::FloatRect getCombinedBoundingBox() const;
+    std::vector<sf::FloatRect> getBoundingBoxes() const;
 
     void flap();
     void update(float deltaT);
     void draw(sf::RenderWindow& window) const;
     void reset(float x, float y);
+
+    bool debug = false;
 };

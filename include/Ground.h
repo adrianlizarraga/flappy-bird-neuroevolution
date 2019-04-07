@@ -12,7 +12,8 @@ public:
            float elasticity = 0.7f);
     ~Ground();
     
-    sf::FloatRect boundingBox() const;
+    sf::FloatRect getCombinedBoundingBox() const;
+    std::vector<sf::FloatRect> getBoundingBoxes() const;
 
     float getElasticity() const;
     

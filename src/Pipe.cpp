@@ -1,4 +1,5 @@
 #include "Pipe.h"
+#include <algorithm>
 
 ////////////////////////////////////////////
 // Pipe
@@ -39,11 +40,16 @@ Pipe::Pipe(sf::FloatRect rect, const sf::Texture &headTexture, const sf::Texture
 Pipe::~Pipe() {}
 
 // ------------------------------------------------------------
-sf::FloatRect Pipe::boundingBox() const {
+sf::FloatRect Pipe::getCombinedBoundingBox() const {
+    return combineBoundingBoxes(this->getBoundingBoxes()[0], this->getBoundingBoxes()[1]);
+}
+
+// ------------------------------------------------------------
+std::vector<sf::FloatRect> Pipe::getBoundingBoxes() const {
     sf::FloatRect bbox1 = this->headSprite.getGlobalBounds();
     sf::FloatRect bbox2 = this->bodySprite.getGlobalBounds();
 
-    return combineBoundingBoxes(bbox1, bbox2);
+    return {bbox1, bbox2};
 }
 
 // ------------------------------------------------------------
@@ -60,13 +66,16 @@ void Pipe::draw(sf::RenderWindow &window) const {
     window.draw(this->bodySprite);
 
     if (this->debug) {
-        sf::FloatRect bbox = this->boundingBox();
-        sf::RectangleShape r(sf::Vector2f(bbox.width, bbox.height));
-        r.setPosition(bbox.left, bbox.top);
-        r.setOutlineThickness(1.0f);
-        r.setOutlineColor(sf::Color::Red);
-        r.setFillColor(sf::Color::Transparent);
-        window.draw(r);
+        std::vector<sf::FloatRect> bboxes = this->getBoundingBoxes();
+
+        for (auto &bbox : bboxes) {
+            sf::RectangleShape r(sf::Vector2f(bbox.width, bbox.height));
+            r.setPosition(bbox.left, bbox.top);
+            r.setOutlineThickness(1.0f);
+            r.setOutlineColor(sf::Color::Red);
+            r.setFillColor(sf::Color::Transparent);
+            window.draw(r);
+        }
     }
 }
 
@@ -83,17 +92,33 @@ PipePair::PipePair(sf::FloatRect rect, float gapY, float gapHeight, const sf::Te
 
 PipePair::~PipePair() {}
 
-sf::FloatRect PipePair::boundingBox() const {
-    sf::FloatRect topBbox = this->topPipe.boundingBox();
-    sf::FloatRect bottomBbox = this->bottomPipe.boundingBox();
+sf::FloatRect PipePair::getCombinedBoundingBox() const {
+    sf::FloatRect topBbox = this->topPipe.getCombinedBoundingBox();
+    sf::FloatRect bottomBbox = this->bottomPipe.getCombinedBoundingBox();
 
     return combineBoundingBoxes(topBbox, bottomBbox);
 }
 
 sf::FloatRect PipePair::getGapRect() const {
-    sf::FloatRect bbox = this->boundingBox();
+    sf::FloatRect bbox = this->getCombinedBoundingBox();
 
     return sf::FloatRect(bbox.left, this->gapY, bbox.width, this->gapHeight);
+}
+
+std::vector<sf::FloatRect> PipePair::getBoundingBoxes() const {
+    std::vector<sf::FloatRect> topBBoxes = this->topPipe.getBoundingBoxes();
+    std::vector<sf::FloatRect> botBBoxes = this->bottomPipe.getBoundingBoxes();
+    std::vector<sf::FloatRect> bboxes;
+
+    for (auto& bbox : topBBoxes) {
+        bboxes.push_back(bbox);
+    }
+
+    for (auto& bbox : botBBoxes) {
+        bboxes.push_back(bbox);
+    }
+
+    return bboxes;
 }
 
 void PipePair::update(float deltaT) {
@@ -106,12 +131,15 @@ void PipePair::draw(sf::RenderWindow &window) const {
     this->bottomPipe.draw(window);
 
     if (this->debug) {
-        sf::FloatRect bbox = this->boundingBox();
-        sf::RectangleShape r(sf::Vector2f(bbox.width, bbox.height));
-        r.setPosition(bbox.left, bbox.top);
-        r.setOutlineThickness(1.0f);
-        r.setOutlineColor(sf::Color::Red);
-        r.setFillColor(sf::Color::Transparent);
-        window.draw(r);
+        std::vector<sf::FloatRect> bboxes = this->getBoundingBoxes();
+
+        for (auto &bbox : bboxes) {
+            sf::RectangleShape r(sf::Vector2f(bbox.width, bbox.height));
+            r.setPosition(bbox.left, bbox.top);
+            r.setOutlineThickness(1.0f);
+            r.setOutlineColor(sf::Color::Red);
+            r.setFillColor(sf::Color::Transparent);
+            window.draw(r);
+        }
     }
 }

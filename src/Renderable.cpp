@@ -24,5 +24,16 @@ Renderable::~Renderable() {}
 
 // -------------------------------------
 bool Renderable::intersects(const Renderable& other) const {
-    return this->boundingBox().intersects(other.boundingBox());
+    std::vector<sf::FloatRect> bboxes = this->getBoundingBoxes();
+    std::vector<sf::FloatRect> otherBBoxes = other.getBoundingBoxes();
+    
+    for (auto& bbox : bboxes) {
+        for (auto& otherBBox : otherBBoxes) {
+            if (bbox.intersects(otherBBox)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }

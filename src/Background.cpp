@@ -10,8 +10,12 @@ Background::~Background() {
 
 }
 
-sf::FloatRect Background::boundingBox() const {
+sf::FloatRect Background::getCombinedBoundingBox() const {
     return this->sprite.getGlobalBounds();
+}
+
+std::vector<sf::FloatRect> Background::getBoundingBoxes() const {
+    return {this->sprite.getGlobalBounds()};
 }
 
 void Background::update(float deltaT) {

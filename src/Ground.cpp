@@ -11,8 +11,12 @@ Ground::~Ground() {
 
 }
 
-sf::FloatRect Ground::boundingBox() const {
+sf::FloatRect Ground::getCombinedBoundingBox() const {
     return this->sprite.getGlobalBounds();
+}
+
+std::vector<sf::FloatRect> Ground::getBoundingBoxes() const {
+    return {this->sprite.getGlobalBounds()};
 }
 
 float Ground::getElasticity() const {

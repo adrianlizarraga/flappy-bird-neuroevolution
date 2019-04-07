@@ -10,7 +10,8 @@ public:
     Background(float x, float y, int width, int height, const sf::Texture& texture);
     ~Background();
     
-    sf::FloatRect boundingBox() const;
+    sf::FloatRect getCombinedBoundingBox() const;
+    std::vector<sf::FloatRect> getBoundingBoxes() const;
     
     void update(float deltaT);
     void draw(sf::RenderWindow& window) const;

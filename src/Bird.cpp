@@ -32,8 +32,12 @@ void Bird::reset(float x, float y) {
     this->sprite.setPosition(x, y);
 }
 
-sf::FloatRect Bird::boundingBox() const {
+sf::FloatRect Bird::getCombinedBoundingBox() const {
     return this->sprite.getGlobalBounds();
+}
+
+std::vector<sf::FloatRect> Bird::getBoundingBoxes() const {
+    return {this->sprite.getGlobalBounds()};
 }
 
 void Bird::flap() {
@@ -50,7 +54,7 @@ void Bird::update(float deltaT) {
     this->acceleration.y = 0.0f;
     
     bool hitGround = this->intersects(*this->_ground);
-    bool hitCeiling = this->boundingBox().top < this->_background->boundingBox().top;
+    bool hitCeiling = this->getBoundingBoxes()[0].top < this->_background->getBoundingBoxes()[0].top;
     
     // Force velocity to zero if bird touches ceiling.
     if (hitCeiling) {
@@ -83,7 +87,6 @@ void Bird::update(float deltaT) {
     // Set the sprite's rotation based on its speed and general location.
     if (hitCeiling || hitGround) {
         this->sprite.setRotation(0.f);
-        std::cout << this->velocity.y << std::endl;
     }
     else if (this->velocity.y > 100.0f) {
         this->sprite.setRotation(30.0f);
