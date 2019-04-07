@@ -17,7 +17,6 @@ Pipe::Pipe(float x, float y, float height, const sf::Texture &headTexture, const
         this->headSprite.setOrigin(0.0f, headSpriteHeight);
     }
 
-    //float ybody = y + (upsidedown ? -bodySpriteHeight : headSpriteHeight);
     float ybody = yhead + (upsidedown ? -headSpriteHeight - bodySpriteHeight: headSpriteHeight);
     this->bodySprite.setTexture(bodyTexture);
     this->bodySprite.setPosition(x + (headSpriteWidth - bodySpriteWidth) / 2.f, ybody);
