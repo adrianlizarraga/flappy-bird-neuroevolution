@@ -26,7 +26,7 @@ class PipePair : public Renderable {
   private:
     Pipe topPipe, bottomPipe;
     float gapY, gapHeight;
-    bool debug = true;
+    bool debug = false;
 
   public:
     PipePair(sf::FloatRect rect, float gapY, float gapHeight, const sf::Texture &headTexture, const sf::Texture &bodyTexture,
