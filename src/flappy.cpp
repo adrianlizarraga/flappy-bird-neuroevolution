@@ -49,7 +49,8 @@ int main() {
     Ground ground(0.0f, height - groundTexture.getSize().y, width, groundTexture.getSize().y, groundTexture);
     Background background(0.0f, 0.0f, width, backgroundTexture.getSize().y, backgroundTexture);
     Bird bird(200, 150, texture, &ground, &background);
-    Pipe pipe(350, height - groundTexture.getSize().y - 100.f, 100.f, pipeHeadTexture, pipeBodyTexture, false);
+    //Pipe pipe(350, height - groundTexture.getSize().y - 100.f, 100.f, pipeHeadTexture, pipeBodyTexture, false);
+    PipePair pipePair(width, 0.0f, height - groundTexture.getSize().y, 150.0f, 64.0f, pipeHeadTexture, pipeBodyTexture);
 
 
     sf::RenderWindow window(sf::VideoMode(width, height), "Flappy bird: live, die, and repeat");
@@ -65,6 +66,12 @@ int main() {
                 if (event.key.code == sf::Keyboard::Space) {
                     bird.flap();
                 }
+                else if (event.key.code == sf::Keyboard::R) {
+                    bird.reset(200, 150);
+                }
+                else if (event.key.code == sf::Keyboard::Escape) {
+                    window.close();
+                }
             }
         }
 
@@ -73,11 +80,12 @@ int main() {
         background.draw(window);
 
         float elapsed = clock.restart().asSeconds();
-        bird.update(elapsed * 5.0);
+        bird.update(elapsed);
+        pipePair.update(elapsed);
 
         bird.draw(window);
         ground.draw(window);
-        pipe.draw(window);
+        pipePair.draw(window);
 
         window.display();
     }

@@ -17,6 +17,7 @@ find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
 ############################################################
 add_executable(flappy
     src/flappy.cpp
+    src/Renderable.cpp
     src/Bird.cpp
     src/Ground.cpp
     src/Background.cpp

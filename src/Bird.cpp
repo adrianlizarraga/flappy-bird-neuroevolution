@@ -23,9 +23,13 @@ Bird::~Bird() {
 
 }
 
-void Bird::reset() {
-    this->_flap = false;
-    this->acceleration = sf::Vector2f(0.0f, 0.0f);
+void Bird::reset(float x, float y) {
+    this->position.x = x;
+    this->position.y = y;
+    this->velocity.x = 0.0f;
+    this->velocity.y = 0.0f;
+    
+    this->sprite.setPosition(x, y);
 }
 
 sf::FloatRect Bird::boundingBox() const {
@@ -35,13 +39,16 @@ sf::FloatRect Bird::boundingBox() const {
 void Bird::flap() {
 
     // Only allow flapping if bird is almost about to start falling again.
-    if (this->velocity.y >= -5.f) {
+    if (this->velocity.y >= -55.f) {
         this->_flap = true;
     }
 }
 
 void Bird::update(float deltaT) {
     this->sprite.setRotation(0);
+    this->acceleration.x = 0.0f;
+    this->acceleration.y = 0.0f;
+    
     bool hitGround = this->intersects(*this->_ground);
     bool hitCeiling = this->boundingBox().top < this->_background->boundingBox().top;
     
@@ -76,18 +83,19 @@ void Bird::update(float deltaT) {
     // Set the sprite's rotation based on its speed and general location.
     if (hitCeiling || hitGround) {
         this->sprite.setRotation(0.f);
+        std::cout << this->velocity.y << std::endl;
     }
-    else if (this->velocity.y > 30.0f) {
+    else if (this->velocity.y > 100.0f) {
         this->sprite.setRotation(30.0f);
     }
-    else if (this->velocity.y < -30.0f) {
+    else if (this->velocity.y < -70.0f) {
         this->sprite.setRotation(-30.0f);
     }
     else {
         this->sprite.setRotation(0.f);
     }
 
-    this->reset();
+    this->_flap = false;
 }
 
 void Bird::draw(sf::RenderWindow& window) const {

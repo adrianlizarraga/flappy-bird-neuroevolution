@@ -1,21 +1,24 @@
 #include "Pipe.h"
 
-Pipe::Pipe(float x, float y, float height, const sf::Texture &headTexture, const sf::Texture &bodyTexture, bool upsidedown)
-    : x(x), y(y), height(height), upsidedown(upsidedown) {
+Pipe::Pipe(float x, float y, float height, const sf::Texture &headTexture, const sf::Texture &bodyTexture, 
+           bool upsidedown, float velocityX) : x(x), y(y), height(height), upsidedown(upsidedown), vx(velocityX) {
 
     int headSpriteWidth = headTexture.getSize().x;
     int headSpriteHeight = headTexture.getSize().y;
     int bodySpriteWidth = bodyTexture.getSize().x;
     int bodySpriteHeight = height - headSpriteHeight;
 
+    float yhead = upsidedown ? y + height : y;
     this->headSprite.setTexture(headTexture);
-    this->headSprite.setPosition(x, y);
+    this->headSprite.setPosition(x, yhead);
 
     if (upsidedown) {
         this->headSprite.setTextureRect(sf::IntRect(0, headSpriteHeight, headSpriteWidth, -headSpriteHeight));
+        this->headSprite.setOrigin(0.0f, headSpriteHeight);
     }
 
-    float ybody = y + (upsidedown ? -bodySpriteHeight : headSpriteHeight);
+    //float ybody = y + (upsidedown ? -bodySpriteHeight : headSpriteHeight);
+    float ybody = yhead + (upsidedown ? -headSpriteHeight - bodySpriteHeight: headSpriteHeight);
     this->bodySprite.setTexture(bodyTexture);
     this->bodySprite.setPosition(x + (headSpriteWidth - bodySpriteWidth) / 2.f, ybody);
 
@@ -32,24 +35,17 @@ sf::FloatRect Pipe::boundingBox() const {
     sf::FloatRect bbox1 = this->headSprite.getGlobalBounds();
     sf::FloatRect bbox2 = this->bodySprite.getGlobalBounds();
 
-    float xlt1 = bbox1.left;
-    float xlt2 = bbox2.left;
-    float ylt1 = bbox1.top;
-    float ylt2 = bbox2.top;
-    float xrb1 = bbox1.left + bbox1.width;
-    float xrb2 = bbox2.left + bbox2.width;
-    float yrb1 = bbox1.top + bbox1.height;
-    float yrb2 = bbox2.top + bbox2.height;
-
-    float xlt = xlt1 < xlt2 ? xlt1 : xlt2;
-    float ylt = ylt1 < ylt2 ? ylt1 : ylt2;
-    float xrb = xrb1 > xrb2 ? xrb1 : xrb2;
-    float yrb = yrb1 > yrb2 ? yrb1 : yrb2;
-
-    return sf::FloatRect(xlt, ylt, xrb - xlt, yrb - ylt);
+    return combineBoundingBoxes(bbox1, bbox2);
 }
 
-void Pipe::update(float deltaT) {}
+void Pipe::update(float deltaT) {
+    float deltaX = this->vx * deltaT;
+
+    this->x += deltaX;
+    this->headSprite.move(deltaX, 0.0f);
+    this->bodySprite.move(deltaX, 0.0f);
+}
+
 void Pipe::draw(sf::RenderWindow &window) const {
     window.draw(this->headSprite);
     window.draw(this->bodySprite);

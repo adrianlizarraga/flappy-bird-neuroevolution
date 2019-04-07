@@ -9,7 +9,7 @@ private:
 
 public:
     Ground(float x, float y, int width, int height, const sf::Texture& texture,
-           float elasticity = 0.85f);
+           float elasticity = 0.7f);
     ~Ground();
     
     sf::FloatRect boundingBox() const;
