@@ -23,6 +23,7 @@ add_executable(flappy
     src/Background.cpp
     src/Pipe.cpp
     src/AssetManager.cpp
+    src/Game.cpp
 )
 
 target_include_directories(flappy
