@@ -4,125 +4,123 @@
 #include <iostream>
 
 Game::Game(int width, int height, int fps)
-    : width(width), height(height), window(sf::VideoMode(width, height), "Flappy bird: live, die, and repeat"),
-      ground(sf::FloatRect(0.0f, height - groundHeight, width, groundHeight), assetManager),
-      background(sf::FloatRect(0.0f, 0.0f, width, backgroundHeight), assetManager), bird(200, 150, assetManager, &ground, &background) {
+    : m_width(width), m_height(height), m_window(sf::VideoMode(width, height), "Flappy bird: live, die, and repeat"),
+      m_ground(sf::FloatRect(0.0f, height - m_groundHeight, width, m_groundHeight), m_assetManager),
+      m_background(sf::FloatRect(0.0f, 0.0f, width, m_backgroundHeight), m_assetManager), m_bird(200, 150, m_assetManager, &m_ground, &m_background) {
 
     // Setup score text
-    sf::Font &font = assetManager.getFont("data/trench.ttf");
-    scoreLabel.setFont(font);
-    scoreLabel.setString("Score: 0");
-    scoreLabel.setCharacterSize(28);
-    scoreLabel.setFillColor(sf::Color(219, 111, 57));
-    scoreLabel.setOutlineThickness(1.0f);
-    scoreLabel.setStyle(sf::Text::Bold);
-    scoreLabel.setPosition(sf::Vector2f(width - 128, 0));
+    sf::Font &font = m_assetManager.getFont("data/trench.ttf");
+    m_scoreLabel.setFont(font);
+    m_scoreLabel.setString("Score: 0");
+    m_scoreLabel.setCharacterSize(28);
+    m_scoreLabel.setFillColor(sf::Color(219, 111, 57));
+    m_scoreLabel.setOutlineThickness(1.0f);
+    m_scoreLabel.setStyle(sf::Text::Bold);
+    m_scoreLabel.setPosition(sf::Vector2f(width - 128, 0));
 
-    window.setFramerateLimit(fps);
+    m_window.setFramerateLimit(fps);
 
     srand(time(nullptr));
 }
 
 void Game::cleanupPipes() {
-    if (pipes.size() > 0) {
-        auto firstPipeIterator = pipes.begin();
+    if (m_pipes.size() > 0) {
+        auto firstPipeIterator = m_pipes.begin();
         sf::FloatRect firstPipeBbox = firstPipeIterator->getCombinedBoundingBox();
 
         if (firstPipeBbox.left + firstPipeBbox.width < 0.0f) {
-            pipes.erase(firstPipeIterator);
+            m_pipes.erase(firstPipeIterator);
         }
     }
 }
 
 void Game::reset() {
-    bird.reset(200, 150);
-    pipes.clear();
+    m_bird.reset(200, 150);
+    m_pipes.clear();
+
+    m_frame = 0;
+    m_score = 0;
+    m_pipeNumber = 0;
+    m_scoreLabel.setString("Score: 0");
 }
 
 void Game::pollEvents() {
     sf::Event event;
-    while (window.pollEvent(event)) {
+
+    while (m_window.pollEvent(event)) {
         if (event.type == sf::Event::Closed)
-            window.close();
+            m_window.close();
         else if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Space) {
-                bird.flap();
+                m_bird.flap();
             } else if (event.key.code == sf::Keyboard::R) {
                 reset();
-                frame = 0;
-                score = 0;
-                pipeNumber = 0;
-                scoreLabel.setString("Score: 0");
             } else if (event.key.code == sf::Keyboard::Escape) {
-                window.close();
+                m_window.close();
             }
         }
     }
 }
 
 void Game::loop() {
-    while (window.isOpen()) {
+    while (m_window.isOpen()) {
         this->pollEvents();
 
         // Add a new pipe every few frames
-        if (frame % 400 == 0) {
+        if (m_frame % 400 == 0) {
             float pipeWidth = 64.0f * random(2, 4) / 2.0f;
-            float pipeHeight = height - groundHeight;
+            float pipeHeight = m_height - m_groundHeight;
             float gapY = random(128, int(pipeHeight - 200));
             float gapHeight = random(64, 128);
 
-            pipes.push_back(PipePair(pipeNumber, sf::FloatRect(width, 0.0f, pipeWidth, pipeHeight), gapY, gapHeight, assetManager));
+            m_pipes.push_back(PipePair(m_pipeNumber, sf::FloatRect(m_width, 0.0f, pipeWidth, pipeHeight), gapY, gapHeight, m_assetManager));
 
-            pipeNumber++;
+            m_pipeNumber++;
         }
 
-        float elapsed = clock.restart().asSeconds();
+        float elapsed = m_clock.restart().asSeconds();
 
         // Update renderables
-        bird.update(elapsed);
+        m_bird.update(elapsed);
 
         bool collided = false;
-        for (auto &pipe : pipes) {
+        for (auto &pipe : m_pipes) {
             pipe.update(elapsed);
 
-            bool intersects = pipe.intersects(bird);
+            bool intersects = pipe.intersects(m_bird);
             collided = collided || intersects;
 
-            if (!intersects && (bird.getPosition().x > pipe.getX() + pipe.getWidth())) {
-                int newscore = std::max(score, pipe.getNumber() + 1);
+            if (!intersects && (m_bird.getPosition().x > pipe.getX() + pipe.getWidth())) {
+                int newscore = std::max(m_score, pipe.getNumber() + 1);
 
-                if (score != newscore) {
-                    score = newscore;
-                    scoreLabel.setString("Score: " + std::to_string(score));
+                if (m_score != newscore) {
+                    m_score = newscore;
+                    m_scoreLabel.setString("Score: " + std::to_string(m_score));
                 }
             }
         }
 
         // Draw
-        window.clear(sf::Color::White);
-        background.draw(window);
-        bird.draw(window);
-        ground.draw(window);
+        m_window.clear(sf::Color::White);
+        m_background.draw(m_window);
+        m_bird.draw(m_window);
+        m_ground.draw(m_window);
 
-        for (auto &pipe : pipes) {
-            pipe.draw(window);
+        for (auto &pipe : m_pipes) {
+            pipe.draw(m_window);
         }
 
-        window.draw(scoreLabel);
+        m_window.draw(m_scoreLabel);
 
-        window.display();
+        m_window.display();
 
         // Clean up and handle collision
         this->cleanupPipes();
 
         if (collided) {
             this->reset();
-            frame = 0;
-            score = 0;
-            pipeNumber = 0;
-            scoreLabel.setString("Score: 0");
         } else {
-            frame++;
+            m_frame++;
         }
     }
 }

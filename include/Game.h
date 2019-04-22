@@ -9,24 +9,24 @@
 
 class Game {
 private:
-    int width, height;
-    float groundHeight = 128.0f;
-    float backgroundHeight = 472.0f;
+    int m_width, m_height;
+    float m_groundHeight = 128.0f;
+    float m_backgroundHeight = 472.0f;
 
-    int frame = 0;
-    int pipeNumber = 0;
-    int score = 0;
+    int m_frame = 0;
+    int m_pipeNumber = 0;
+    int m_score = 0;
 
-    sf::RenderWindow window;
-    sf::Clock clock;
+    sf::RenderWindow m_window;
+    sf::Clock m_clock;
     
-    AssetManager assetManager;
+    AssetManager m_assetManager;
 
-    sf::Text scoreLabel;
-    Ground ground;
-    Background background;
-    Bird bird;
-    std::list<PipePair> pipes;
+    sf::Text m_scoreLabel;
+    Ground m_ground;
+    Background m_background;
+    Bird m_bird;
+    std::list<PipePair> m_pipes;
 
     void cleanupPipes();
     void reset();
