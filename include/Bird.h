@@ -1,8 +1,11 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include <list>
 #include "Renderable.h"
 #include "AssetManager.h"
+#include "MLPNetwork.h"
+#include "Pipe.h"
 
 class Ground;
 class Background;
@@ -21,6 +24,8 @@ private:
     const Ground* _ground;
     const Background* _background;
 
+    alai::MLPNetwork brain;
+
 public:
     Bird(float x, float y, 
          AssetManager& assetManager,
@@ -35,6 +40,7 @@ public:
     sf::FloatRect getCombinedBoundingBox() const;
     std::vector<sf::FloatRect> getBoundingBoxes() const;
 
+    void sense(const std::list<PipePair>& pipes, float width, float height);
     void flap();
     void update(float deltaT);
     void draw(sf::RenderWindow& window) const;

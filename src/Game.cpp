@@ -78,6 +78,9 @@ void Game::loop() {
             m_pipeNumber++;
         }
 
+        // Update bird's view of the world.
+        m_bird.sense(m_pipes, m_width, m_height);
+
         float elapsed = m_clock.restart().asSeconds();
 
         // Update renderables
