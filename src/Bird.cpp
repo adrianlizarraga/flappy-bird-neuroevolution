@@ -57,9 +57,9 @@ void Bird::sense(const std::list<PipePair> &pipes, float width, float height) {
 
     inputs[0] = (gapRect.left - this->position.x) / width;
     inputs[1] = (gapRect.left + gapRect.width - this->position.x) / width;
-    inputs[2] = (gapRect.top - this->position.y) / height;
-    inputs[3] = (gapRect.top + gapRect.height - this->position.y) / height;
-    inputs[4] = this->velocity.y / 500.f;
+    inputs[2] = -(gapRect.top - this->position.y) / height;
+    inputs[3] = -(gapRect.top + gapRect.height - this->position.y) / height;
+    inputs[4] = -this->velocity.y / 500.f;
 
     // Use our big bird brain to determine if should flap.
     std::vector<double> flapProb = this->brain.compute(inputs);
