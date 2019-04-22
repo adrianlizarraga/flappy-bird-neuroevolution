@@ -5,7 +5,7 @@
 
 Bird::Bird(float x, float y, AssetManager &assetManager, const Ground *ground, const Background *background, float mass, float lift)
     : position(x, y), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f), mass(mass), lift(lift), _ground(ground), _background(background),
-      brain(6, {5, 1}) {
+      brain(5, {5, 1}) {
 
     sf::Texture &texture = assetManager.getTexture("data/bird34x24.png");
     sf::Vector2u size = texture.getSize();
@@ -53,14 +53,13 @@ void Bird::sense(const std::list<PipePair> &pipes, float width, float height) {
     sf::FloatRect gapRect = pipe.getGapRect();
 
     // Use the gap coordinates and the bird's upward velocity as inputs to the neural network.    
-    std::vector<double> inputs(6);
+    std::vector<double> inputs(5);
 
     inputs[0] = (gapRect.left - this->position.x) / width;
     inputs[1] = (gapRect.left + gapRect.width - this->position.x) / width;
-    inputs[2] = (gapRect.top) / height;
-    inputs[3] = (gapRect.top + gapRect.height) / height;
+    inputs[2] = (gapRect.top - this->position.y) / height;
+    inputs[3] = (gapRect.top + gapRect.height - this->position.y) / height;
     inputs[4] = this->velocity.y / 500.f;
-    inputs[5] = this->position.y / height;
 
     // Use our big bird brain to determine if should flap.
     std::vector<double> flapProb = this->brain.compute(inputs);
