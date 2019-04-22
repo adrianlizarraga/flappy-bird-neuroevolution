@@ -5,10 +5,10 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    std::string mode = argc > 1 ? argv[1] : "train";
+    int mode = argc > 1 ? std::stoi(argv[1]) : 0;
     Game game(1200, 600, 120);
 
-    game.loop();
+    game.loop(mode);
 
     return 0;
 }

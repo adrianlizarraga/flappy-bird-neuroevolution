@@ -31,11 +31,14 @@ private:
     void cleanupPipes();
     void reset();
     void pollEvents();
+    void loopPlayer();
+    void loopTraining();
+    void loopAI();
 
 public:
     Game(int width, int height, int fps = 120);
     Game(const Game&) = delete;
     Game& operator=(const Game&) = delete;
 
-    void loop();
+    void loop(int mode = 0);
 };

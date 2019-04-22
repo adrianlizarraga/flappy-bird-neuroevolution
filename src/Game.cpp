@@ -61,8 +61,19 @@ void Game::pollEvents() {
         }
     }
 }
+void Game::loop(int mode) {
+    if (mode == 0) {
+        this->loopPlayer();
+    }
+    else if (mode == 1) {
+        this->loopTraining();
+    }
+    else if (mode == 2) {
+        this->loopAI();
+    }
+}
 
-void Game::loop() {
+void Game::loopPlayer() {
     while (m_window.isOpen()) {
         this->pollEvents();
 
@@ -77,9 +88,6 @@ void Game::loop() {
 
             m_pipeNumber++;
         }
-
-        // Update bird's view of the world.
-        m_bird.sense(m_pipes, m_width, m_height);
 
         float elapsed = m_clock.restart().asSeconds();
 
@@ -126,4 +134,12 @@ void Game::loop() {
             m_frame++;
         }
     }
+}
+
+void Game::loopTraining() {
+
+}
+
+void Game::loopAI() {
+    
 }
