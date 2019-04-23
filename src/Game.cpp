@@ -1,12 +1,12 @@
 #include "Game.h"
-#include <ctime>
 #include <iostream>
 #include <random>
 
 Game::Game(int width, int height, int fps)
     : m_width(width), m_height(height), m_window(sf::VideoMode(width, height), "Flappy bird: live, die, and repeat"),
       m_ground(sf::FloatRect(0.0f, height - m_groundHeight, width, m_groundHeight), m_assetManager),
-      m_background(sf::FloatRect(0.0f, 0.0f, width, m_backgroundHeight), m_assetManager), m_bird(200, 150, m_assetManager, &m_ground, &m_background) {
+      m_background(sf::FloatRect(0.0f, 0.0f, width, m_backgroundHeight), m_assetManager),
+      m_bird(200, 150, m_assetManager, &m_ground, &m_background) {
 
     // Setup score text
     sf::Font &font = m_assetManager.getFont("data/trench.ttf");
@@ -19,8 +19,6 @@ Game::Game(int width, int height, int fps)
     m_scoreLabel.setPosition(sf::Vector2f(width - 128, 0));
 
     m_window.setFramerateLimit(fps);
-
-    srand(time(nullptr));
 }
 
 void Game::cleanupPipes() {
@@ -64,11 +62,9 @@ void Game::pollEvents() {
 void Game::loop(int mode) {
     if (mode == 0) {
         this->loopPlayer();
-    }
-    else if (mode == 1) {
+    } else if (mode == 1) {
         this->loopTraining();
-    }
-    else if (mode == 2) {
+    } else if (mode == 2) {
         this->loopAI();
     }
 }
@@ -140,10 +136,6 @@ void Game::loopPlayer() {
     }
 }
 
-void Game::loopTraining() {
+void Game::loopTraining() {}
 
-}
-
-void Game::loopAI() {
-
-}
+void Game::loopAI() {}
