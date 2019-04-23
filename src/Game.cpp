@@ -1,7 +1,7 @@
 #include "Game.h"
-#include "utils.h"
 #include <ctime>
 #include <iostream>
+#include <random>
 
 Game::Game(int width, int height, int fps)
     : m_width(width), m_height(height), m_window(sf::VideoMode(width, height), "Flappy bird: live, die, and repeat"),
@@ -74,15 +74,19 @@ void Game::loop(int mode) {
 }
 
 void Game::loopPlayer() {
+    const float pipeHeight = m_height - m_groundHeight;
+    std::default_random_engine engine;
+    std::uniform_int_distribution<int> randGapY(128, int(pipeHeight - 200));
+    std::uniform_int_distribution<int> randGapHeight(64, 128);
+
     while (m_window.isOpen()) {
         this->pollEvents();
 
         // Add a new pipe every few frames
         if (m_frame % 400 == 0) {
-            float pipeWidth = 64.0f * random(2, 4) / 2.0f;
-            float pipeHeight = m_height - m_groundHeight;
-            float gapY = random(128, int(pipeHeight - 200));
-            float gapHeight = random(64, 128);
+            float pipeWidth = 96.f;
+            float gapY = randGapY(engine);
+            float gapHeight = randGapHeight(engine);
 
             m_pipes.push_back(PipePair(m_pipeNumber, sf::FloatRect(m_width, 0.0f, pipeWidth, pipeHeight), gapY, gapHeight, m_assetManager));
 
@@ -141,5 +145,5 @@ void Game::loopTraining() {
 }
 
 void Game::loopAI() {
-    
+
 }
