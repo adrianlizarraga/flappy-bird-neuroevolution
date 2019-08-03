@@ -5,7 +5,7 @@
 
 Bird::Bird(float x, float y, AssetManager &assetManager, const Ground *ground, const Background *background, float mass, float lift)
     : position(x, y), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f), mass(mass), lift(lift), _ground(ground), _background(background),
-      brain(5, {5, 1}) {
+      brain(5, {5, 1}), score(0) {
 
     sf::Texture &texture = assetManager.getTexture("data/bird34x24.png");
     sf::Vector2u size = texture.getSize();
@@ -26,6 +26,22 @@ void Bird::reset(float x, float y) {
     this->velocity.y = 0.0f;
 
     this->sprite.setPosition(x, y);
+
+    this->score = 0;
+}
+
+bool Bird::checkPipeCollision(const PipePair& pipe) {
+    bool collided = pipe.intersects(*this);
+
+    if (!collided && (this->position.x > pipe.getX() + pipe.getWidth())) {
+        this->score = std::max(this->score, pipe.getNumber() + 1);
+    }
+
+    return collided;
+}
+
+int Bird::getScore() const {
+    return this->score;
 }
 
 sf::Vector2f Bird::getPosition() const { return this->position; }

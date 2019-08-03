@@ -9,6 +9,7 @@
 
 class Ground;
 class Background;
+class Pipe;
 
 class Bird: public Renderable {
 private:
@@ -23,6 +24,8 @@ private:
     bool _flap;
     const Ground* _ground;
     const Background* _background;
+
+    int score;
 
     alai::MLPNetwork brain;
 
@@ -40,11 +43,15 @@ public:
     sf::FloatRect getCombinedBoundingBox() const;
     std::vector<sf::FloatRect> getBoundingBoxes() const;
 
+    int getScore() const;
+
     void sense(const std::list<PipePair>& pipes, float width, float height);
     void flap();
     void update(float deltaT);
     void draw(sf::RenderWindow& window) const;
     void reset(float x, float y);
+
+    bool checkPipeCollision(const PipePair& pipe);
 
     bool debug = false;
 };

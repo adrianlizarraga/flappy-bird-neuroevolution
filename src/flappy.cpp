@@ -6,9 +6,9 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     int mode = argc > 1 ? std::stoi(argv[1]) : 0;
-    Game game(1200, 600, 120);
+    Game game(1200, 600, 120, mode);
 
-    game.loop(mode);
+    game.loop();
 
     return 0;
 }

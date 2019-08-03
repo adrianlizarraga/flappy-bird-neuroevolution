@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <random>
 #include <SFML/Graphics.hpp>
 #include "AssetManager.h"
 #include "Background.h"
@@ -9,9 +10,14 @@
 
 class Game {
 private:
+    int m_mode;
     int m_width, m_height;
     float m_groundHeight = 128.0f;
     float m_backgroundHeight = 472.0f;
+
+    std::default_random_engine m_engine;
+    std::uniform_int_distribution<int> m_randGapY;
+    std::uniform_int_distribution<int> m_randGapHeight;
 
     int m_frame = 0;
     int m_pipeNumber = 0;
@@ -28,17 +34,19 @@ private:
     Bird m_bird;
     std::list<PipePair> m_pipes;
 
+    void addPipe();
     void cleanupPipes();
     void reset();
     void pollEvents();
     void loopPlayer();
     void loopTraining();
     void loopAI();
+    void draw();
 
 public:
-    Game(int width, int height, int fps = 120);
+    Game(int width, int height, int fps = 120, int mode = 0);
     Game(const Game&) = delete;
     Game& operator=(const Game&) = delete;
 
-    void loop(int mode = 0);
+    void loop();
 };
