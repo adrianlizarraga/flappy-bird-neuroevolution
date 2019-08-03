@@ -22,6 +22,7 @@ private:
     int m_frame = 0;
     int m_pipeNumber = 0;
     int m_score = 0;
+    bool m_paused = false;
 
     sf::RenderWindow m_window;
     sf::Clock m_clock;
