@@ -102,11 +102,6 @@ void Game::loop() {
 }
 
 void Game::loopPlayer() {
-    const float pipeHeight = m_height - m_groundHeight;
-    std::default_random_engine engine;
-    std::uniform_int_distribution<int> randGapY(128, int(pipeHeight - 200));
-    std::uniform_int_distribution<int> randGapHeight(64, 128);
-
     while (m_window.isOpen()) {
         
         // Handle user input
