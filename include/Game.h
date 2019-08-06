@@ -7,6 +7,7 @@
 #include "Bird.h"
 #include "Ground.h"
 #include "Pipe.h"
+#include "Menu.h"
 
 class Game {
 private:
@@ -35,13 +36,15 @@ private:
     Bird m_bird;
     std::list<PipePair> m_pipes;
 
+    Menu m_menu;
+
     void addPipe();
     void cleanupPipes();
     void reset();
     void pollEvents();
-    void loopPlayer();
-    void loopTraining();
-    void loopAI();
+    void updatePlayer(float elapsed);
+    void updateTraining(float elapsed);
+    void updateAI(float elapsed);
     void draw();
 
 public:
@@ -50,4 +53,7 @@ public:
     Game& operator=(const Game&) = delete;
 
     void loop();
+    bool getPaused() const;
+    void setPaused(bool paused);
+    void setMode(int mode);
 };

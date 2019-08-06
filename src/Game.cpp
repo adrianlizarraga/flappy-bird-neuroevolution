@@ -7,7 +7,7 @@ Game::Game(int width, int height, int fps, int mode)
       m_background(sf::FloatRect(0.0f, 0.0f, width, m_backgroundHeight), m_assetManager),
       m_bird(200, 150, m_assetManager, &m_ground, &m_background),
       m_randGapY(128, int(m_height - m_groundHeight - 200)),
-      m_randGapHeight(64, 128) {
+      m_randGapHeight(64, 128), m_menu(this) {
 
     // Setup score text
     sf::Font &font = m_assetManager.getFont("data/trench.ttf");
@@ -59,19 +59,39 @@ void Game::reset() {
     m_scoreLabel.setString("Score: 0");
 }
 
+bool Game::getPaused() const {
+    return m_paused;
+}
+
+void Game::setPaused(bool paused) {
+    m_paused = paused;
+}
+
+void Game::setMode(int mode) {
+    if (mode != m_mode) {
+        this->reset();
+    }
+
+    m_mode = mode;
+}
+
 void Game::pollEvents() {
     sf::Event event;
 
     while (m_window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed)
+        if (event.type == sf::Event::Closed) {
             m_window.close();
+        }
+        else if (m_paused) {
+            m_menu.handleEvent(event);
+        }
         else if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Space && m_mode == 0 && !m_paused) {
+            if (event.key.code == sf::Keyboard::Space && m_mode == 0) {
                 m_bird.flap();
             } else if (event.key.code == sf::Keyboard::R) {
                 reset();
             } else if (event.key.code == sf::Keyboard::P) {
-                m_paused = !m_paused;
+                this->setPaused(!m_paused);
             } else if (event.key.code == sf::Keyboard::Escape) {
                 m_window.close();
             }
@@ -95,52 +115,22 @@ void Game::draw() {
 }
 
 void Game::loop() {
-    if (m_mode == 0) {
-        this->loopPlayer();
-    } else if (m_mode == 1) {
-        this->loopTraining();
-    } else if (m_mode == 2) {
-        this->loopAI();
-    }
-}
-
-void Game::loopPlayer() {
     while (m_window.isOpen()) {
-        
-        // Handle user input
         this->pollEvents();
 
         float elapsed = m_clock.restart().asSeconds();
-        
+
         if (!m_paused) {
-            
-            // Add a pipe if necessary
-            this->addPipe();
-
-            // Update bird physics
-            m_bird.update(elapsed);
-
-            // Update pipe physics, check bird/pipe collision, and update score.
-            bool collided = false;
-            for (auto &pipe : m_pipes) {
-                pipe.update(elapsed);
-
-                bool intersects = m_bird.checkPipeCollision(pipe);
-                collided = collided || intersects;
-
-                m_score = m_bird.getScore();
-                m_scoreLabel.setString("Score: " + std::to_string(m_score));
+            if (m_mode == 0) {
+                this->updatePlayer(elapsed);
+            } else if (m_mode == 1) {
+                this->updateTraining(elapsed);
+            } else if (m_mode == 2) {
+                this->updateAI(elapsed);
             }
-
-            // Clean up
-            this->cleanupPipes();
-
-            // Reset game if collided
-            if (collided) {
-                this->reset();
-            } else {
-                m_frame++;
-            }
+        } else {
+            m_menu.update(elapsed);
+            m_menu.draw(m_window);
         }
 
         // Draw
@@ -148,51 +138,69 @@ void Game::loopPlayer() {
     }
 }
 
-void Game::loopTraining() {}
+void Game::updatePlayer(float elapsed) {
 
-void Game::loopAI() {
-    while (m_window.isOpen()) {
-        
-        // Handle user input...user not allowed to control the bird though...
-        this->pollEvents();
+    // Add a pipe if necessary
+    this->addPipe();
 
-        float elapsed = m_clock.restart().asSeconds();
-        
-        if (!m_paused) {
+    // Update bird physics
+    m_bird.update(elapsed);
 
-            // Add a pipe if necessary.
-            this->addPipe();
+    // Update pipe physics, check bird/pipe collision, and update score.
+    bool collided = false;
+    for (auto &pipe : m_pipes) {
+        pipe.update(elapsed);
 
-            // Update bird physics
-            m_bird.update(elapsed);
+        bool intersects = m_bird.checkPipeCollision(pipe);
+        collided = collided || intersects;
 
-            // Update pipe physics, check bird/pipe collision, and update score.
-            bool collided = false;
-            for (auto &pipe : m_pipes) {
-                pipe.update(elapsed);
-
-                bool intersects = m_bird.checkPipeCollision(pipe);
-                collided = collided || intersects;
-
-                m_score = m_bird.getScore();
-                m_scoreLabel.setString("Score: " + std::to_string(m_score));
-            }
-
-            // Clean up
-            this->cleanupPipes();
-
-            // Reset game if collided
-            if (collided) {
-                this->reset();
-            } else {
-                m_frame++;
-            }
-
-            // Let bird do its own thing with its neural network brain.
-            m_bird.sense(m_pipes, m_width, m_height);
-        }
-
-        // Draw
-        this->draw();
+        m_score = m_bird.getScore();
+        m_scoreLabel.setString("Score: " + std::to_string(m_score));
     }
+
+    // Clean up
+    this->cleanupPipes();
+
+    // Reset game if collided
+    if (collided) {
+        this->reset();
+    } else {
+        m_frame++;
+    }
+}
+
+void Game::updateTraining(float elapsed) {}
+
+void Game::updateAI(float elapsed) {
+
+    // Add a pipe if necessary.
+    this->addPipe();
+
+    // Update bird physics
+    m_bird.update(elapsed);
+
+    // Update pipe physics, check bird/pipe collision, and update score.
+    bool collided = false;
+    for (auto &pipe : m_pipes) {
+        pipe.update(elapsed);
+
+        bool intersects = m_bird.checkPipeCollision(pipe);
+        collided = collided || intersects;
+
+        m_score = m_bird.getScore();
+        m_scoreLabel.setString("Score: " + std::to_string(m_score));
+    }
+
+    // Clean up
+    this->cleanupPipes();
+
+    // Reset game if collided
+    if (collided) {
+        this->reset();
+    } else {
+        m_frame++;
+    }
+
+    // Let bird do its own thing with its neural network brain.
+    m_bird.sense(m_pipes, m_width, m_height);
 }
