@@ -49,7 +49,7 @@ class Game {
     Bird m_bird;
     std::list<PipePair> m_pipes;
 
-    int m_populationSize = 10;
+    int m_populationSize = 100;
     std::vector<BirdTrainingInfo> m_trainingBirds;
 
     Menu m_menu;

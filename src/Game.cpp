@@ -7,7 +7,7 @@ Game::Game(int width, int height, int fps, int mode)
       m_ground(sf::FloatRect(0.0f, height - m_groundHeight, width, m_groundHeight), m_assetManager),
       m_background(sf::FloatRect(0.0f, 0.0f, width, m_backgroundHeight), m_assetManager),
       m_bird(200, 150, m_assetManager, &m_ground, &m_background), m_randGapY(128, int(m_height - m_groundHeight - 200)),
-      m_randGapHeight(64, 128),
+      m_randGapHeight(100, 128),
       m_menu(this, sf::FloatRect(width / 2.f - width / 4.f, height / 2.f - height / 4.f, width / 2.f, height / 2.f)) {
 
     // Setup score text
