@@ -1,31 +1,33 @@
 #include "Game.h"
+#include <algorithm>
 #include <iostream>
 
 Game::Game(int width, int height, int fps, int mode)
-    : m_width(width), m_height(height), m_mode(mode), m_window(sf::VideoMode(width, height), "Flappy bird: live, die, and repeat"),
+    : m_width(width), m_height(height), m_window(sf::VideoMode(width, height), "Flappy bird: live, die, and repeat"), m_mode(mode),
       m_ground(sf::FloatRect(0.0f, height - m_groundHeight, width, m_groundHeight), m_assetManager),
       m_background(sf::FloatRect(0.0f, 0.0f, width, m_backgroundHeight), m_assetManager),
-      m_bird(200, 150, m_assetManager, &m_ground, &m_background),
-      m_randGapY(128, int(m_height - m_groundHeight - 200)),
-      m_randGapHeight(64, 128), 
+      m_bird(200, 150, m_assetManager, &m_ground, &m_background), m_randGapY(128, int(m_height - m_groundHeight - 200)),
+      m_randGapHeight(64, 128),
       m_menu(this, sf::FloatRect(width / 2.f - width / 4.f, height / 2.f - height / 4.f, width / 2.f, height / 2.f)) {
 
     // Setup score text
     sf::Font &font = m_assetManager.getFont("data/trench.ttf");
-    m_scoreLabel.setFont(font);
-    m_scoreLabel.setString("Score: 0");
-    m_scoreLabel.setCharacterSize(28);
-    m_scoreLabel.setFillColor(sf::Color(219, 111, 57));
-    m_scoreLabel.setOutlineThickness(1.0f);
-    m_scoreLabel.setStyle(sf::Text::Bold);
-    m_scoreLabel.setPosition(sf::Vector2f(width - 128, 0));
+    m_statusLabel.setFont(font);
+    m_statusLabel.setString("Score: 0");
+    m_statusLabel.setCharacterSize(28);
+    m_statusLabel.setFillColor(sf::Color(219, 111, 57));
+    m_statusLabel.setOutlineThickness(1.0f);
+    m_statusLabel.setStyle(sf::Text::Bold);
+    m_statusLabel.setPosition(sf::Vector2f(width - 256, 0));
 
     m_window.setFramerateLimit(fps);
+
+    this->reset();
 }
 
 void Game::addPipe() {
     const float pipeHeight = m_height - m_groundHeight;
-    
+
     // Add a new pipe every few frames
     if (m_frame % 400 == 0) {
         float pipeWidth = 96.f;
@@ -50,34 +52,43 @@ void Game::cleanupPipes() {
 }
 
 void Game::reset() {
-    m_bird.reset(200, 150);
     m_pipes.clear();
-
     m_frame = 0;
-    m_score = 0;
     m_pipeNumber = 0;
-    m_scoreLabel.setString("Score: 0");
+
+    if (m_mode == 0 || m_mode == 2) {
+        m_bird.reset(200, 150);
+        m_statusLabel.setString("Score: 0");
+    } else if (m_mode == 1) {
+
+        if (m_trainingBirds.empty()) {
+            for (int i = 0; i < m_populationSize; ++i) {
+                BirdTrainingInfo trainingBird(200, 150, m_assetManager, &m_ground, &m_background);
+
+                this->m_trainingBirds.push_back(trainingBird);
+            }
+        } else {
+            for (auto &trainingBird : m_trainingBirds) {
+                trainingBird.bird->reset(200, 150);
+                trainingBird.alive = true;
+                trainingBird.fitness = 0.f;
+            }
+        }
+
+        m_statusLabel.setString("Generation 0\nBest fitness 0%");
+    }
 }
 
-bool Game::getPaused() const {
-    return m_paused;
-}
+bool Game::getPaused() const { return m_paused; }
 
-void Game::setPaused(bool paused) {
-    m_paused = paused;
-}
+void Game::setPaused(bool paused) { m_paused = paused; }
 
 void Game::setMode(int mode) {
-    if (mode != m_mode) {
-        this->reset();
-    }
-
     m_mode = mode;
+    this->reset();
 }
 
-int Game::getMode() const {
-    return m_mode;
-}
+int Game::getMode() const { return m_mode; }
 
 void Game::pollEvents() {
     sf::Event event;
@@ -85,11 +96,9 @@ void Game::pollEvents() {
     while (m_window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
             m_window.close();
-        }
-        else if (m_paused) {
+        } else if (m_paused) {
             m_menu.handleEvent(event);
-        }
-        else if (event.type == sf::Event::KeyPressed) {
+        } else if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Space && m_mode == 0) {
                 m_bird.flap();
             } else if (event.key.code == sf::Keyboard::R) {
@@ -106,14 +115,26 @@ void Game::pollEvents() {
 void Game::draw() {
     m_window.clear(sf::Color::White);
     m_background.draw(m_window);
-    m_bird.draw(m_window);
+
+    if (m_mode == 0 || m_mode == 2) {
+        m_bird.draw(m_window);
+    } else {
+
+        // Draw any training birds that are still alive
+        for (auto &trainingBird : m_trainingBirds) {
+            if (trainingBird.alive) {
+                trainingBird.bird->draw(m_window);
+            }
+        }
+    }
+
     m_ground.draw(m_window);
 
     for (auto &pipe : m_pipes) {
         pipe.draw(m_window);
     }
 
-    m_window.draw(m_scoreLabel);
+    m_window.draw(m_statusLabel);
 
     if (m_paused) {
         m_menu.draw(m_window);
@@ -161,8 +182,7 @@ void Game::updatePlayer(float elapsed) {
         bool intersects = m_bird.checkPipeCollision(pipe);
         collided = collided || intersects;
 
-        m_score = m_bird.getScore();
-        m_scoreLabel.setString("Score: " + std::to_string(m_score));
+        m_statusLabel.setString("Score: " + std::to_string(m_bird.getScore()));
     }
 
     // Clean up
@@ -176,7 +196,43 @@ void Game::updatePlayer(float elapsed) {
     }
 }
 
-void Game::updateTraining(float elapsed) {}
+void Game::updateTraining(float elapsed) {
+    this->addPipe();
+
+    // Update pipe physics
+    for (auto &pipe : m_pipes) {
+        pipe.update(elapsed);
+    }
+
+    // Update birds and check collisions
+    for (auto &trainingBird : m_trainingBirds) {
+        if (trainingBird.alive) {
+            trainingBird.bird->update(elapsed);
+
+            bool collided = false;
+            for (auto &pipe : m_pipes) {
+                bool intersects = trainingBird.bird->checkPipeCollision(pipe);
+                collided = collided || intersects;
+            }
+
+            trainingBird.alive = !collided;
+
+            trainingBird.bird->sense(m_pipes, m_width, m_height);
+        }
+    }
+
+    // Clean up
+    this->cleanupPipes();
+
+    // Check if any birds are still alive.
+    bool anyAlive = std::any_of(m_trainingBirds.begin(), m_trainingBirds.end(), [](const BirdTrainingInfo &b) { return b.alive; });
+
+    if (anyAlive) {
+        m_frame++;
+    } else {
+        this->reset();
+    }
+}
 
 void Game::updateAI(float elapsed) {
 
@@ -194,8 +250,7 @@ void Game::updateAI(float elapsed) {
         bool intersects = m_bird.checkPipeCollision(pipe);
         collided = collided || intersects;
 
-        m_score = m_bird.getScore();
-        m_scoreLabel.setString("Score: " + std::to_string(m_score));
+        m_statusLabel.setString("Score: " + std::to_string(m_bird.getScore()));
     }
 
     // Clean up

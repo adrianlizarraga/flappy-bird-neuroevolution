@@ -10,21 +10,22 @@ Menu::Menu(Game *game, sf::FloatRect rect) : m_game(game) {
     this->sprite.setPosition(rect.left, rect.top);
     this->sprite.setScale(rect.width / size.x, rect.height / size.y);
 
-    this->initModeText();
-}
-
-void Menu::initModeText() {
     sf::Vector2f position = this->sprite.getPosition();
     
     // Setup mode text
     sf::Font &font = m_assetManager.getFont("data/trench.ttf");
     m_modeText.setFont(font);
-    m_modeText.setString("Mode: " + std::to_string(m_game->getMode()));
     m_modeText.setCharacterSize(32);
     m_modeText.setFillColor(sf::Color(219, 111, 57));
     m_modeText.setOutlineThickness(1.0f);
     m_modeText.setStyle(sf::Text::Bold);
     m_modeText.setPosition(sf::Vector2f(position.x + 64, position.y + 64));
+
+    this->initModeText();
+}
+
+void Menu::initModeText() {
+    m_modeText.setString("Mode: " + std::to_string(m_game->getMode()));
 }
 
 void Menu::handleEvent(sf::Event event) {
