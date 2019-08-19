@@ -56,4 +56,5 @@ public:
     bool getPaused() const;
     void setPaused(bool paused);
     void setMode(int mode);
+    int getMode() const;
 };

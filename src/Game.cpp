@@ -7,7 +7,8 @@ Game::Game(int width, int height, int fps, int mode)
       m_background(sf::FloatRect(0.0f, 0.0f, width, m_backgroundHeight), m_assetManager),
       m_bird(200, 150, m_assetManager, &m_ground, &m_background),
       m_randGapY(128, int(m_height - m_groundHeight - 200)),
-      m_randGapHeight(64, 128), m_menu(this) {
+      m_randGapHeight(64, 128), 
+      m_menu(this, sf::FloatRect(width / 2.f - width / 4.f, height / 2.f - height / 4.f, width / 2.f, height / 2.f)) {
 
     // Setup score text
     sf::Font &font = m_assetManager.getFont("data/trench.ttf");
@@ -52,7 +53,6 @@ void Game::reset() {
     m_bird.reset(200, 150);
     m_pipes.clear();
 
-    m_paused = false;
     m_frame = 0;
     m_score = 0;
     m_pipeNumber = 0;
@@ -73,6 +73,10 @@ void Game::setMode(int mode) {
     }
 
     m_mode = mode;
+}
+
+int Game::getMode() const {
+    return m_mode;
 }
 
 void Game::pollEvents() {
@@ -111,6 +115,10 @@ void Game::draw() {
 
     m_window.draw(m_scoreLabel);
 
+    if (m_paused) {
+        m_menu.draw(m_window);
+    }
+
     m_window.display();
 }
 
@@ -130,7 +138,6 @@ void Game::loop() {
             }
         } else {
             m_menu.update(elapsed);
-            m_menu.draw(m_window);
         }
 
         // Draw
