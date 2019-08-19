@@ -28,6 +28,8 @@ void Bird::reset(float x, float y) {
     this->sprite.setPosition(x, y);
 
     this->score = 0;
+
+    this->brain.randomizeWeights();
 }
 
 bool Bird::checkPipeCollision(const PipePair& pipe) {
