@@ -11,17 +11,6 @@
 #include <random>
 #include <vector>
 
-struct BirdTrainingInfo {
-    std::shared_ptr<Bird> bird;
-    float fitness;
-    bool alive;
-
-    BirdTrainingInfo(float x, float y, AssetManager &assetManager, const Ground *ground, const Background *background)
-        : bird(std::make_shared<Bird>(x, y, assetManager, ground, background)) {
-        fitness = 0.f;
-        alive = true;
-    }
-};
 
 class Game {
   private:
@@ -49,8 +38,10 @@ class Game {
     Bird m_bird;
     std::list<PipePair> m_pipes;
 
-    int m_populationSize = 100;
-    std::vector<BirdTrainingInfo> m_trainingBirds;
+    int m_populationSize = 150;
+    std::vector<std::shared_ptr<Bird> > m_trainingBirds;
+    std::vector<std::shared_ptr<Bird> > m_deadTrainingBirds;
+    std::vector<int> m_trainingBirdFitnesses;
 
     Menu m_menu;
 

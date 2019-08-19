@@ -7,7 +7,7 @@ Game::Game(int width, int height, int fps, int mode)
       m_ground(sf::FloatRect(0.0f, height - m_groundHeight, width, m_groundHeight), m_assetManager),
       m_background(sf::FloatRect(0.0f, 0.0f, width, m_backgroundHeight), m_assetManager),
       m_bird(200, 150, m_assetManager, &m_ground, &m_background), m_randGapY(128, int(m_height - m_groundHeight - 200)),
-      m_randGapHeight(100, 128),
+      m_randGapHeight(128, 156), m_trainingBirdFitnesses(m_populationSize, 0.f),
       m_menu(this, sf::FloatRect(width / 2.f - width / 4.f, height / 2.f - height / 4.f, width / 2.f, height / 2.f)) {
 
     // Setup score text
@@ -60,19 +60,12 @@ void Game::reset() {
         m_bird.reset(200, 150);
         m_statusLabel.setString("Score: 0");
     } else if (m_mode == 1) {
-
-        if (m_trainingBirds.empty()) {
-            for (int i = 0; i < m_populationSize; ++i) {
-                BirdTrainingInfo trainingBird(200, 150, m_assetManager, &m_ground, &m_background);
-
-                this->m_trainingBirds.push_back(trainingBird);
-            }
-        } else {
-            for (auto &trainingBird : m_trainingBirds) {
-                trainingBird.bird->reset(200, 150);
-                trainingBird.alive = true;
-                trainingBird.fitness = 0.f;
-            }
+        m_deadTrainingBirds.clear();
+        m_trainingBirds.clear();
+            
+        for (int i = 0; i < m_populationSize; ++i) {
+            m_trainingBirds.push_back(std::make_shared<Bird>(200, 150, m_assetManager, &m_ground, &m_background));
+             m_trainingBirdFitnesses[i] = 0.f;
         }
 
         m_statusLabel.setString("Generation 0\nBest fitness 0%");
@@ -121,10 +114,8 @@ void Game::draw() {
     } else {
 
         // Draw any training birds that are still alive
-        for (auto &trainingBird : m_trainingBirds) {
-            if (trainingBird.alive) {
-                trainingBird.bird->draw(m_window);
-            }
+        for (auto &bird : m_trainingBirds) {
+            bird->draw(m_window);
         }
     }
 
@@ -205,19 +196,23 @@ void Game::updateTraining(float elapsed) {
     }
 
     // Update birds and check collisions
-    for (auto &trainingBird : m_trainingBirds) {
-        if (trainingBird.alive) {
-            trainingBird.bird->update(elapsed);
+    for (auto it = m_trainingBirds.begin(); it != m_trainingBirds.end();) {
+        (*it)->update(elapsed);
 
-            bool collided = false;
-            for (auto &pipe : m_pipes) {
-                bool intersects = trainingBird.bird->checkPipeCollision(pipe);
-                collided = collided || intersects;
-            }
+        bool collided = false;
+        for (auto &pipe : m_pipes) {
+            bool intersects = (*it)->checkPipeCollision(pipe);
+            collided = collided || intersects;
+        }
 
-            trainingBird.alive = !collided;
+        (*it)->sense(m_pipes, m_width, m_height);
 
-            trainingBird.bird->sense(m_pipes, m_width, m_height);
+        if (collided) {
+            m_deadTrainingBirds.push_back(*it);
+            it = m_trainingBirds.erase(it);
+        }
+        else {
+            ++it;
         }
     }
 
@@ -225,12 +220,27 @@ void Game::updateTraining(float elapsed) {
     this->cleanupPipes();
 
     // Check if any birds are still alive.
-    bool anyAlive = std::any_of(m_trainingBirds.begin(), m_trainingBirds.end(), [](const BirdTrainingInfo &b) { return b.alive; });
-
-    if (anyAlive) {
+    if (!m_trainingBirds.empty()) {
         m_frame++;
     } else {
-        this->reset();
+        //this->reset();
+
+        // Calculate fitness by normalizing individual bird scores.
+        int totalScore = std::accumulate(m_deadTrainingBirds.begin(), m_deadTrainingBirds.end(), 0, [](int acc, const std::shared_ptr<Bird>& bird) {
+            return acc + bird->getScore();
+        });
+
+        std::cout<< "Total score is " << totalScore << std::endl;
+
+        for (int i = 0; i < m_deadTrainingBirds.size(); ++i) {
+            m_trainingBirdFitnesses[i] = totalScore > 0 ? m_deadTrainingBirds[i]->getScore() / (float) totalScore : 0.f;
+
+            std::cout << "Bird fitness " << m_trainingBirdFitnesses[i] << std::endl;
+        }
+
+        // Generate a new population by cloning birds. Select birds to clone with probability proportional to fitness.
+
+
     }
 }
 
