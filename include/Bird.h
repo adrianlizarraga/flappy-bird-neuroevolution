@@ -34,6 +34,14 @@ public:
          AssetManager& assetManager,
          const Ground* ground,
          const Background* background,
+         float mass = 0.05f,
+         float lift = 1250.0f);
+
+    Bird(float x, float y,
+         AssetManager& assetManager,
+         const Ground* ground,
+         const Background* background,
+         const alai::MLPNetwork& brain,
          float mass = 0.05f, 
          float lift = 1250.0f);
     ~Bird();
@@ -44,6 +52,8 @@ public:
     std::vector<sf::FloatRect> getBoundingBoxes() const;
 
     int getScore() const;
+    sf::Vector2f getVelocity() const;
+    alai::MLPNetwork getBrain() const;
 
     void sense(const std::list<PipePair>& pipes, float width, float height);
     void flap();

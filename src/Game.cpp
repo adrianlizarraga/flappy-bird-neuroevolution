@@ -7,8 +7,8 @@ Game::Game(int width, int height, int fps, int mode)
     : m_width(width), m_height(height), m_window(sf::VideoMode(width, height), "Flappy bird: live, die, and repeat"), m_mode(mode),
       m_ground(sf::FloatRect(0.0f, height - m_groundHeight, width, m_groundHeight), m_assetManager),
       m_background(sf::FloatRect(0.0f, 0.0f, width, m_backgroundHeight), m_assetManager),
-      m_bird(200, 150, m_assetManager, &m_ground, &m_background), m_randGapY(128, int(m_height - m_groundHeight - 200)),
-      m_randGapHeight(128, 156), m_engine(std::chrono::system_clock::now().time_since_epoch().count()),
+      m_bird(200, 150, m_assetManager, &m_ground, &m_background), m_randGapY(64, int(m_height - m_groundHeight - 64)),
+      m_randGapHeight(100, 256), m_randPercentage(0, 100), m_engine(std::chrono::system_clock::now().time_since_epoch().count()),
       m_trainingBirdFitnesses(m_populationSize, 0.f),
       m_menu(this, sf::FloatRect(width / 2.f - width / 4.f, height / 2.f - height / 4.f, width / 2.f, height / 2.f)) {
 
@@ -20,7 +20,7 @@ Game::Game(int width, int height, int fps, int mode)
     m_statusLabel.setFillColor(sf::Color(219, 111, 57));
     m_statusLabel.setOutlineThickness(1.0f);
     m_statusLabel.setStyle(sf::Text::Bold);
-    m_statusLabel.setPosition(sf::Vector2f(width - 256, 0));
+    m_statusLabel.setPosition(sf::Vector2f(width - 280, 0));
 
     m_window.setFramerateLimit(fps);
 
@@ -33,8 +33,8 @@ void Game::addPipe() {
     // Add a new pipe every few frames
     if (m_frame % 400 == 0) {
         float pipeWidth = 96.f;
-        float gapY = m_randGapY(m_engine);
         float gapHeight = m_randGapHeight(m_engine);
+        float gapY = std::min(m_randGapY(m_engine), int(m_height - (m_groundHeight + gapHeight + 64)));
 
         m_pipes.push_back(PipePair(m_pipeNumber, sf::FloatRect(m_width, 0.0f, pipeWidth, pipeHeight), gapY, gapHeight, m_assetManager));
 
@@ -62,12 +62,14 @@ void Game::reset() {
         m_bird.reset(200, 150);
         m_statusLabel.setString("Score: 0");
     } else if (m_mode == 1) {
+        m_generation = 0;
+        m_bestScore = 0;
         m_deadTrainingBirds.clear();
         m_trainingBirds.clear();
             
         for (int i = 0; i < m_populationSize; ++i) {
             m_trainingBirds.push_back(std::make_shared<Bird>(200, 150, m_assetManager, &m_ground, &m_background));
-             m_trainingBirdFitnesses[i] = 0.f;
+            m_trainingBirdFitnesses[i] = 0.f;
         }
 
         m_statusLabel.setString("Generation 0\nBest fitness 0%");
@@ -207,7 +209,9 @@ void Game::updateTraining(float elapsed) {
             collided = collided || intersects;
         }
 
-        if (collided) {
+        bool stopped = (*it)->intersects(m_ground) && std::abs((*it)->getVelocity().y) < 2;
+
+        if (collided || stopped) {
             m_deadTrainingBirds.push_back(*it);
             it = m_trainingBirds.erase(it);
         }
@@ -230,18 +234,61 @@ void Game::updateTraining(float elapsed) {
             return acc + bird->getScore();
         });
 
-        std::cout<< "Total score is " << totalScore << std::endl;
+        double maxFitness = 0.0;
+        int maxFitnessIndex = 0;
 
         for (int i = 0; i < m_deadTrainingBirds.size(); ++i) {
-            m_trainingBirdFitnesses[i] = totalScore > 0 ? m_deadTrainingBirds[i]->getScore() / (float) totalScore : 0.f;
+            m_trainingBirdFitnesses[i] = totalScore > 0 ? (m_deadTrainingBirds[i]->getScore()) / (float) totalScore : 0.f;
 
-            std::cout << "Bird fitness " << m_trainingBirdFitnesses[i] << std::endl;
+            if (m_trainingBirdFitnesses[i] >= maxFitness) {
+                maxFitness = m_trainingBirdFitnesses[i];
+                maxFitnessIndex = i;
+            }
         }
 
-        // Generate a new population by cloning birds. Select birds to clone with probability proportional to fitness.
+        // Select birds with probably proportional to fitness and clone (w/ mutation)
+        for (int i = 0; i < m_populationSize - 1; ++i) {
+            int birdIndex = this->selectBird();
+            alai::MLPNetwork brain = m_deadTrainingBirds[birdIndex]->getBrain();
 
+            brain.mutate(0.1, 0.05);
+            m_trainingBirds.push_back(std::make_shared<Bird>(200, 150, m_assetManager, &m_ground, &m_background, brain));
+        }
 
+        // Always keep a clone of the best bird in the previous generation.
+        alai::MLPNetwork brain = m_deadTrainingBirds[maxFitnessIndex]->getBrain();
+
+        brain.mutate(0.05, 0.001);
+        m_trainingBirds.push_back(std::make_shared<Bird>(200, 150, m_assetManager, &m_ground, &m_background, brain));
+
+        // Reset state for next generation
+        m_generation++;
+        m_bestScore = m_deadTrainingBirds[maxFitnessIndex]->getScore();
+        m_pipes.clear();
+        m_frame = 0;
+        m_pipeNumber = 0;
+        m_deadTrainingBirds.clear();
     }
+
+    m_statusLabel.setString("Generation: " + std::to_string(m_generation) + "\nBest score: " + std::to_string(m_bestScore) + "\nBirds remaining: " + std::to_string(m_trainingBirds.size()));
+}
+
+int Game::selectBird() {
+
+    // Generate a new population by cloning birds. Select birds to clone with probability proportional to fitness.
+    double randNum = m_randPercentage(m_engine);
+    int selectedBirdIndex = 0;
+
+    for (int i = 0; i < m_trainingBirdFitnesses.size(); ++i) {
+        randNum -= m_trainingBirdFitnesses[i] * 100;
+        selectedBirdIndex = i;
+
+        if (randNum <= 0) {
+            break;
+        }
+    }
+
+    return selectedBirdIndex;
 }
 
 void Game::updateAI(float elapsed) {

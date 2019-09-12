@@ -22,6 +22,7 @@ class Game {
     std::default_random_engine m_engine;
     std::uniform_int_distribution<int> m_randGapY;
     std::uniform_int_distribution<int> m_randGapHeight;
+    std::uniform_int_distribution<int> m_randPercentage;
 
     int m_frame = 0;
     int m_pipeNumber = 0;
@@ -38,10 +39,12 @@ class Game {
     Bird m_bird;
     std::list<PipePair> m_pipes;
 
-    int m_populationSize = 150;
+    int m_populationSize = 500;
+    int m_generation = 0;
+    int m_bestScore = 0;
     std::vector<std::shared_ptr<Bird> > m_trainingBirds;
     std::vector<std::shared_ptr<Bird> > m_deadTrainingBirds;
-    std::vector<int> m_trainingBirdFitnesses;
+    std::vector<double> m_trainingBirdFitnesses;
 
     Menu m_menu;
 
@@ -53,6 +56,8 @@ class Game {
     void updateTraining(float elapsed);
     void updateAI(float elapsed);
     void draw();
+
+    int selectBird();
 
   public:
     Game(int width, int height, int fps = 120, int mode = 0);

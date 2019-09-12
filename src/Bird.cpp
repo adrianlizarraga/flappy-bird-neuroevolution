@@ -4,8 +4,13 @@
 #include <iostream>
 
 Bird::Bird(float x, float y, AssetManager &assetManager, const Ground *ground, const Background *background, float mass, float lift)
+    : Bird(x, y, assetManager, ground, background, alai::MLPNetwork(5, {5,1}), mass, lift) {
+}
+
+Bird::Bird(float x, float y, AssetManager &assetManager, const Ground *ground, const Background *background,
+           const alai::MLPNetwork &brain, float mass, float lift)
     : position(x, y), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f), mass(mass), lift(lift), _ground(ground), _background(background),
-      brain(5, {5, 1}), score(0) {
+      brain(brain), score(0) {
 
     sf::Texture &texture = assetManager.getTexture("data/bird34x24.png");
     sf::Vector2u size = texture.getSize();
@@ -44,6 +49,14 @@ bool Bird::checkPipeCollision(const PipePair& pipe) {
 
 int Bird::getScore() const {
     return this->score;
+}
+
+sf::Vector2f Bird::getVelocity() const {
+    return this->velocity;
+}
+
+alai::MLPNetwork Bird::getBrain() const {
+    return this->brain;
 }
 
 sf::Vector2f Bird::getPosition() const { return this->position; }
