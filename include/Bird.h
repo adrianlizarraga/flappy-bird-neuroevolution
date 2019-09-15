@@ -31,14 +31,14 @@ private:
 
 public:
     Bird(float x, float y, 
-         AssetManager& assetManager,
+         sf::Texture& texture,
          const Ground* ground,
          const Background* background,
          float mass = 0.05f,
          float lift = 1250.0f);
 
     Bird(float x, float y,
-         AssetManager& assetManager,
+         sf::Texture& texture,
          const Ground* ground,
          const Background* background,
          const alai::MLPNetwork& brain,

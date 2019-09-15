@@ -7,7 +7,7 @@ Game::Game(int width, int height, int fps, int mode)
     : m_width(width), m_height(height), m_window(sf::VideoMode(width, height), "Flappy bird: live, die, and repeat"), m_mode(mode),
       m_ground(sf::FloatRect(0.0f, height - m_groundHeight, width, m_groundHeight), m_assetManager),
       m_background(sf::FloatRect(0.0f, 0.0f, width, m_backgroundHeight), m_assetManager),
-      m_bird(200, 150, m_assetManager, &m_ground, &m_background), m_randGapY(64, int(m_height - m_groundHeight - 64)),
+      m_bird(200, 150, m_assetManager.getTexture("data/bird34x24.png"), &m_ground, &m_background), m_randGapY(64, int(m_height - m_groundHeight - 64)),
       m_randGapHeight(100, 256), m_randPercentage(0, 100), m_engine(std::chrono::system_clock::now().time_since_epoch().count()),
       m_trainingBirdFitnesses(m_populationSize, 0.f),
       m_menu(this, sf::FloatRect(width / 2.f - width / 4.f, height / 2.f - height / 4.f, width / 2.f, height / 2.f)) {
@@ -68,7 +68,7 @@ void Game::reset() {
         m_trainingBirds.clear();
             
         for (int i = 0; i < m_populationSize; ++i) {
-            m_trainingBirds.push_back(std::make_shared<Bird>(200, 150, m_assetManager, &m_ground, &m_background));
+            m_trainingBirds.push_back(std::make_shared<Bird>(200, 150, m_assetManager.getTexture("data/bird34x24.png"), &m_ground, &m_background));
             m_trainingBirdFitnesses[i] = 0.f;
         }
 
@@ -252,14 +252,14 @@ void Game::updateTraining(float elapsed) {
             alai::MLPNetwork brain = m_deadTrainingBirds[birdIndex]->getBrain();
 
             brain.mutate(0.1, 0.05);
-            m_trainingBirds.push_back(std::make_shared<Bird>(200, 150, m_assetManager, &m_ground, &m_background, brain));
+            m_trainingBirds.push_back(std::make_shared<Bird>(200, 150, m_assetManager.getTexture("data/bird34x24.png"), &m_ground, &m_background, brain));
         }
 
         // Always keep a clone of the best bird in the previous generation.
         alai::MLPNetwork brain = m_deadTrainingBirds[maxFitnessIndex]->getBrain();
 
         brain.mutate(0.05, 0.001);
-        m_trainingBirds.push_back(std::make_shared<Bird>(200, 150, m_assetManager, &m_ground, &m_background, brain));
+        m_trainingBirds.push_back(std::make_shared<Bird>(200, 150, m_assetManager.getTexture("data/bird34x24.png"), &m_ground, &m_background, brain));
 
         // Reset state for next generation
         m_generation++;
