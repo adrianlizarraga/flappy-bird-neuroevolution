@@ -4,10 +4,10 @@
 ////////////////////////////////////////////
 // Pipe
 ///////////////////////////////////////////
-Pipe::Pipe(sf::FloatRect rect, AssetManager &assetManager, bool upsidedown, float velocityX) : x(rect.left), vx(velocityX), width(rect.width), upsidedown(upsidedown) {
+Pipe::Pipe(sf::FloatRect rect, bool upsidedown, float velocityX) : x(rect.left), vx(velocityX), width(rect.width), upsidedown(upsidedown) {
 
-    sf::Texture &headTexture = assetManager.getTexture("data/pipetop64x32.png");
-    sf::Texture &bodyTexture = assetManager.getTexture("data/pipebody60x32.png", false, true);
+    sf::Texture &headTexture = AssetManager::instance().getTexture("data/pipetop64x32.png");
+    sf::Texture &bodyTexture = AssetManager::instance().getTexture("data/pipebody60x32.png", false, true);
 
     sf::Vector2u headTextureSize = headTexture.getSize();
     sf::Vector2u bodyTextureSize = bodyTexture.getSize();
@@ -98,10 +98,10 @@ void Pipe::draw(sf::RenderWindow &window) const {
 // PipePair
 ///////////////////////////////////////////
 
-PipePair::PipePair(int number, sf::FloatRect rect, float gapY, float gapHeight, AssetManager &assetManager, float velocityX)
+PipePair::PipePair(int number, sf::FloatRect rect, float gapY, float gapHeight, float velocityX)
     : number(number), gapY(gapY), gapHeight(gapHeight),
-      topPipe(sf::FloatRect(rect.left, rect.top, rect.width, gapY - rect.top), assetManager, true, velocityX),
-      bottomPipe(sf::FloatRect(rect.left, gapY + gapHeight, rect.width, rect.top + rect.height - (gapY + gapHeight)), assetManager, false,
+      topPipe(sf::FloatRect(rect.left, rect.top, rect.width, gapY - rect.top), true, velocityX),
+      bottomPipe(sf::FloatRect(rect.left, gapY + gapHeight, rect.width, rect.top + rect.height - (gapY + gapHeight)), false,
                  velocityX) {}
 
 // ------------------------------------------------------------

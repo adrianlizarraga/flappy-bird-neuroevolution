@@ -1,6 +1,5 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "AssetManager.h"
 
 class Game;
 
@@ -10,8 +9,6 @@ private:
     sf::Sprite sprite;
     sf::Text m_modeText;
     sf::Text m_modeSubtext;
-
-    AssetManager m_assetManager;
 
     void initModeText();
 public:

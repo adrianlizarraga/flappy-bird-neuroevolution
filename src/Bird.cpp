@@ -3,14 +3,15 @@
 #include "Ground.h"
 #include <iostream>
 
-Bird::Bird(float x, float y, sf::Texture& texture, const Ground *ground, const Background *background, float mass, float lift)
-    : Bird(x, y, texture, ground, background, alai::MLPNetwork(5, {5,1}), mass, lift) {
+Bird::Bird(float x, float y, const Ground *ground, const Background *background, float mass, float lift)
+    : Bird(x, y, ground, background, alai::MLPNetwork(5, {5,1}), mass, lift) {
 }
 
-Bird::Bird(float x, float y, sf::Texture& texture, const Ground *ground, const Background *background,
+Bird::Bird(float x, float y, const Ground *ground, const Background *background,
            const alai::MLPNetwork &brain, float mass, float lift)
     : position(x, y), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f), mass(mass), lift(lift), _ground(ground), _background(background),
       brain(brain), score(0) {
+    sf::Texture& texture = AssetManager::instance().getTexture("data/bird34x24.png");
     sf::Vector2u size = texture.getSize();
 
     this->sprite.setPosition(x, y);

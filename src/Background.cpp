@@ -1,7 +1,7 @@
 #include "Background.h"
 
-Background::Background(sf::FloatRect rect, AssetManager& assetManager){
-    sf::Texture& texture = assetManager.getTexture("data/background300x472.png", false, true);
+Background::Background(sf::FloatRect rect){
+    sf::Texture& texture = AssetManager::instance().getTexture("data/background300x472.png", false, true);
     
     this->sprite.setTexture(texture);
     this->sprite.setTextureRect(sf::IntRect(0, 0, rect.width, texture.getSize().y));

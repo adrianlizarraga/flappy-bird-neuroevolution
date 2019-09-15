@@ -9,7 +9,7 @@ private:
     sf::Sprite sprite;
 
 public:
-    Background(sf::FloatRect rect, AssetManager& assetManager);
+    Background(sf::FloatRect rect);
     ~Background();
     
     sf::FloatRect getCombinedBoundingBox() const;

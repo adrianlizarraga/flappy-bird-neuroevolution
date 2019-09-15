@@ -17,6 +17,12 @@ bool operator<(const TextureKey &k1, const TextureKey &k2) {
 
 AssetManager::AssetManager() {}
 
+AssetManager& AssetManager::instance() {
+    static AssetManager instance;
+
+    return instance;
+}
+
 bool AssetManager::hasTexture(const TextureKey &key) const {
     auto it = this->textures.find(key);
 

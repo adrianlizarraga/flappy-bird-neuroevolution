@@ -1,7 +1,7 @@
 #include "Ground.h"
 
-Ground::Ground(sf::FloatRect rect, AssetManager& assetManager, float elasticity): elasticity(elasticity) {
-    sf::Texture& texture = assetManager.getTexture("data/ground64x128.png", false, true);
+Ground::Ground(sf::FloatRect rect, float elasticity): elasticity(elasticity) {
+    sf::Texture& texture = AssetManager::instance().getTexture("data/ground64x128.png", false, true);
     
     this->sprite.setTexture(texture);
     this->sprite.setTextureRect(sf::IntRect(0, 0, rect.width, texture.getSize().y));

@@ -18,8 +18,10 @@ class AssetManager {
 private:
     std::map<TextureKey, std::unique_ptr<sf::Texture> > textures;
     std::map<std::string, std::unique_ptr<sf::Font> > fonts;
-public:
+
     AssetManager();
+public:
+    static AssetManager& instance();
     AssetManager(const AssetManager&) = delete;
     AssetManager& operator=(const AssetManager&) = delete;
     

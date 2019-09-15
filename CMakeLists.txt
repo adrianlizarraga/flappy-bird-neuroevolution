@@ -25,6 +25,10 @@ add_executable(flappy
     src/AssetManager.cpp
     src/Game.cpp
     src/Menu.cpp
+    src/states/StateStack.cpp
+    src/states/PlayState.cpp
+    src/states/CPUPlayState.cpp
+    src/states/TrainState.cpp
 )
 
 target_include_directories(flappy

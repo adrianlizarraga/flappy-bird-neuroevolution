@@ -30,15 +30,13 @@ private:
     alai::MLPNetwork brain;
 
 public:
-    Bird(float x, float y, 
-         sf::Texture& texture,
+    Bird(float x, float y,
          const Ground* ground,
          const Background* background,
          float mass = 0.05f,
          float lift = 1250.0f);
 
     Bird(float x, float y,
-         sf::Texture& texture,
          const Ground* ground,
          const Background* background,
          const alai::MLPNetwork& brain,

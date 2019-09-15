@@ -1,9 +1,10 @@
 #include "Menu.h"
 #include "Game.h"
+#include "AssetManager.h"
 #include <string>
 
 Menu::Menu(Game *game, sf::FloatRect rect) : m_game(game) {
-    sf::Texture& texture = m_assetManager.getTexture("data/menubackground.png", false, false);
+    sf::Texture& texture = AssetManager::instance().getTexture("data/menubackground.png", false, false);
     sf::Vector2u size = texture.getSize();
     
     this->sprite.setTexture(texture);
@@ -13,7 +14,7 @@ Menu::Menu(Game *game, sf::FloatRect rect) : m_game(game) {
     sf::Vector2f position = this->sprite.getPosition();
     
     // Setup mode text
-    sf::Font &font = m_assetManager.getFont("data/trench.ttf");
+    sf::Font &font = AssetManager::instance().getFont("data/trench.ttf");
     m_modeText.setFont(font);
     m_modeText.setCharacterSize(32);
     m_modeText.setFillColor(sf::Color(219, 111, 57));

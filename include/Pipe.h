@@ -12,7 +12,7 @@ class Pipe : public Renderable {
     bool debug = false;
 
   public:
-    Pipe(sf::FloatRect rect, AssetManager& assetManager, bool upsidedown = false, float velocityX = -100.0f);
+    Pipe(sf::FloatRect rect, bool upsidedown = false, float velocityX = -100.0f);
 
     ~Pipe();
     
@@ -33,7 +33,7 @@ class PipePair : public Renderable {
     int number;
 
   public:
-    PipePair(int number, sf::FloatRect rect, float gapY, float gapHeight, AssetManager& assetManager, float velocityX = -100.0f);
+    PipePair(int number, sf::FloatRect rect, float gapY, float gapHeight, float velocityX = -100.0f);
     ~PipePair();
 
     int getNumber() const;

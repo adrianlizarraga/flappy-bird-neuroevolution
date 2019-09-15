@@ -9,7 +9,7 @@ private:
     float elasticity;
 
 public:
-    Ground(sf::FloatRect rect, AssetManager& assetManager, float elasticity = 0.55f);
+    Ground(sf::FloatRect rect, float elasticity = 0.55f);
     ~Ground();
     
     sf::FloatRect getCombinedBoundingBox() const;
