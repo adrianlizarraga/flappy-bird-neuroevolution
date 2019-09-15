@@ -1,4 +1,4 @@
-#include "Renderable.h"
+#include "entity/Renderable.h"
 
 // -----------------------------------------------------
 sf::FloatRect combineBoundingBoxes(const sf::FloatRect& bbox1, const sf::FloatRect& bbox2) {

@@ -1,4 +1,5 @@
-#include "Ground.h"
+#include "entity/Ground.h"
+#include "asset/AssetManager.h"
 
 Ground::Ground(sf::FloatRect rect, float elasticity): elasticity(elasticity) {
     sf::Texture& texture = AssetManager::instance().getTexture("data/ground64x128.png", false, true);

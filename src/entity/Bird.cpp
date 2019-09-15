@@ -1,6 +1,7 @@
-#include "Bird.h"
-#include "Background.h"
-#include "Ground.h"
+#include "entity/Bird.h"
+#include "entity/Background.h"
+#include "entity/Ground.h"
+#include "asset/AssetManager.h"
 #include <iostream>
 
 Bird::Bird(float x, float y, const Ground *ground, const Background *background, float mass, float lift)

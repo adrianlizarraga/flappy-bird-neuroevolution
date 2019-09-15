@@ -2,10 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <list>
-#include "Renderable.h"
-#include "AssetManager.h"
+#include "entity/Renderable.h"
 #include "MLPNetwork.h"
-#include "Pipe.h"
+#include "entity/Pipe.h"
 
 class Ground;
 class Background;

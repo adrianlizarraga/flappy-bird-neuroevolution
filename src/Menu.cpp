@@ -1,6 +1,6 @@
 #include "Menu.h"
 #include "Game.h"
-#include "AssetManager.h"
+#include "asset/AssetManager.h"
 #include <string>
 
 Menu::Menu(Game *game, sf::FloatRect rect) : m_game(game) {

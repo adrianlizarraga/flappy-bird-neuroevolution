@@ -1,8 +1,8 @@
 #pragma once
-#include "Background.h"
-#include "Bird.h"
-#include "Ground.h"
-#include "Pipe.h"
+#include "entity/Background.h"
+#include "entity/Bird.h"
+#include "entity/Ground.h"
+#include "entity/Pipe.h"
 #include "states/State.h"
 #include <SFML/Graphics.hpp>
 #include <list>

@@ -1,5 +1,5 @@
 #include "states/PlayState.h"
-#include "AssetManager.h"
+#include "asset/AssetManager.h"
 #include <chrono>
 
 PlayState::PlayState(int width, int height, StateStackInterface& stateStack)

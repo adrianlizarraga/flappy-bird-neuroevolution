@@ -1,4 +1,4 @@
-#include "AssetManager.h"
+#include "asset/AssetManager.h"
 #include <iostream>
 
 TextureKey::TextureKey(const std::string &filename, bool smooth, bool repeated) : filename(filename), smooth(smooth), repeated(repeated) {}

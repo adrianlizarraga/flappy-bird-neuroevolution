@@ -1,5 +1,5 @@
 #include "states/CPUPlayState.h"
-#include "AssetManager.h"
+#include "asset/AssetManager.h"
 #include <chrono>
 
 CPUPlayState::CPUPlayState(int width, int height, StateStackInterface& stateStack)

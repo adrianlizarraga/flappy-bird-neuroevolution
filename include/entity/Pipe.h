@@ -1,6 +1,5 @@
 #pragma once
-#include "AssetManager.h"
-#include "Renderable.h"
+#include "entity/Renderable.h"
 #include <SFML/Graphics.hpp>
 
 class Pipe : public Renderable {

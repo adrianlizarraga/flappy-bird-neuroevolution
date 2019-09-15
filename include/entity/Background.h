@@ -1,21 +1,18 @@
 #pragma once
+#include "entity/Renderable.h"
 #include <SFML/Graphics.hpp>
-#include "Renderable.h"
-#include "AssetManager.h"
+#include <memory>
 
-class Ground: public Renderable {
+class Background: public Renderable {
 private:
     sf::Sprite sprite;
-    float elasticity;
 
 public:
-    Ground(sf::FloatRect rect, float elasticity = 0.55f);
-    ~Ground();
+    Background(sf::FloatRect rect);
+    ~Background();
     
     sf::FloatRect getCombinedBoundingBox() const;
     std::vector<sf::FloatRect> getBoundingBoxes() const;
-
-    float getElasticity() const;
     
     void update(float deltaT);
     void draw(sf::RenderWindow& window) const;

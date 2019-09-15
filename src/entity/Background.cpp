@@ -1,4 +1,5 @@
-#include "Background.h"
+#include "entity/Background.h"
+#include "asset/AssetManager.h"
 
 Background::Background(sf::FloatRect rect){
     sf::Texture& texture = AssetManager::instance().getTexture("data/background300x472.png", false, true);

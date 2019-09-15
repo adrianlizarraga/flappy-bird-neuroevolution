@@ -17,12 +17,12 @@ find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
 ############################################################
 add_executable(flappy
     src/flappy.cpp
-    src/Renderable.cpp
-    src/Bird.cpp
-    src/Ground.cpp
-    src/Background.cpp
-    src/Pipe.cpp
-    src/AssetManager.cpp
+    src/entity/Renderable.cpp
+    src/entity/Bird.cpp
+    src/entity/Ground.cpp
+    src/entity/Background.cpp
+    src/entity/Pipe.cpp
+    src/asset/AssetManager.cpp
     src/Game.cpp
     src/Menu.cpp
     src/states/StateStack.cpp

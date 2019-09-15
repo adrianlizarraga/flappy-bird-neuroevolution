@@ -1,4 +1,5 @@
-#include "Pipe.h"
+#include "entity/Pipe.h"
+#include "asset/AssetManager.h"
 #include <algorithm>
 
 ////////////////////////////////////////////
