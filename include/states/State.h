@@ -4,7 +4,7 @@
 #include "states/StateStackInterface.h"
 
 class State {
-private:
+protected:
     StateStackInterface& m_stateStack;
 public:
     State(StateStackInterface& stateStack): m_stateStack(stateStack) {}

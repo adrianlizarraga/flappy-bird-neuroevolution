@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "states/TitleScreenState.h"
 #include "states/PlayState.h"
 #include "states/CPUPlayState.h"
 #include "states/TrainState.h"
@@ -12,7 +13,7 @@ Game::Game(int width, int height, int fps, int mode)
 
     m_window.setFramerateLimit(fps);
 
-    if (mode == 0) {
+    /*if (mode == 0) {
         m_stateStack.push(std::make_shared<PlayState>(width, height, m_stateStack));
     }
     else if (mode == 1) {
@@ -20,7 +21,9 @@ Game::Game(int width, int height, int fps, int mode)
     }
     else if (mode == 2) {
         m_stateStack.push(std::make_shared<CPUPlayState>(width, height, m_stateStack));
-    }
+    }*/
+
+    m_stateStack.push(std::make_shared<TitleScreenState>(width, height, m_stateStack));
 }
 void Game::reset() {
 

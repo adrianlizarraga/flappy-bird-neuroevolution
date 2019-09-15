@@ -25,6 +25,7 @@ add_executable(flappy
     src/asset/AssetManager.cpp
     src/Game.cpp
     src/Menu.cpp
+    src/states/TitleScreenState.cpp
     src/states/StateStack.cpp
     src/states/PlayState.cpp
     src/states/CPUPlayState.cpp
