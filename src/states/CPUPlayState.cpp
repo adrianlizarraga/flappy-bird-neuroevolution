@@ -10,14 +10,14 @@ CPUPlayState::CPUPlayState(int width, int height, StateStackInterface& stateStac
       m_randGapHeight(100, 256), m_engine(std::chrono::system_clock::now().time_since_epoch().count()) {
     
     // Setup score text
-    sf::Font &font = AssetManager::instance().getFont("data/trench.ttf");
+    sf::Font &font = AssetManager::instance().getFont("data/flappy.ttf");
     m_statusLabel.setFont(font);
     m_statusLabel.setString("Score: 0");
     m_statusLabel.setCharacterSize(28);
     m_statusLabel.setFillColor(sf::Color(219, 111, 57));
     m_statusLabel.setOutlineThickness(1.0f);
     m_statusLabel.setStyle(sf::Text::Bold);
-    m_statusLabel.setPosition(sf::Vector2f(width - 280, 0));
+    m_statusLabel.setPosition(sf::Vector2f(width - 200, 0));
 
     this->reset();
 }

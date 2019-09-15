@@ -17,7 +17,7 @@ PlayState::PlayState(int width, int height, StateStackInterface& stateStack)
     m_statusLabel.setFillColor(sf::Color(219, 111, 57));
     m_statusLabel.setOutlineThickness(1.0f);
     m_statusLabel.setStyle(sf::Text::Bold);
-    m_statusLabel.setPosition(sf::Vector2f(width - 280, 0));
+    m_statusLabel.setPosition(sf::Vector2f(width - 200, 0));
 
     this->reset();
 }
