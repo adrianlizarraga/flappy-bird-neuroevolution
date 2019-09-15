@@ -2,8 +2,8 @@
 #include "AssetManager.h"
 #include <chrono>
 
-PlayState::PlayState(int width, int height)
-    : m_width(width), m_height(height),
+PlayState::PlayState(int width, int height, StateStackInterface& stateStack)
+    : State(stateStack), m_width(width), m_height(height),
       m_ground(sf::FloatRect(0.0f, height - m_groundHeight, width, m_groundHeight)),
       m_background(sf::FloatRect(0.0f, 0.0f, width, m_backgroundHeight)),
       m_bird(200, 150, &m_ground, &m_background), m_randGapY(64, int(m_height - m_groundHeight - 64)),

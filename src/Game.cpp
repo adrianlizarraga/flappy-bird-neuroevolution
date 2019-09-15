@@ -13,13 +13,13 @@ Game::Game(int width, int height, int fps, int mode)
     m_window.setFramerateLimit(fps);
 
     if (mode == 0) {
-        m_stateStack.push(std::make_shared<PlayState>(width, height));
+        m_stateStack.push(std::make_shared<PlayState>(width, height, m_stateStack));
     }
     else if (mode == 1) {
-        m_stateStack.push(std::make_shared<TrainState>(width, height));
+        m_stateStack.push(std::make_shared<TrainState>(width, height, m_stateStack));
     }
     else if (mode == 2) {
-        m_stateStack.push(std::make_shared<CPUPlayState>(width, height));
+        m_stateStack.push(std::make_shared<CPUPlayState>(width, height, m_stateStack));
     }
 }
 void Game::reset() {

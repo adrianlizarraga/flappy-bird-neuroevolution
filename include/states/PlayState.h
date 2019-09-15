@@ -31,7 +31,7 @@ private:
     void cleanupPipes();
     void reset();
 public:
-    PlayState(int width, int height);
+    PlayState(int width, int height, StateStackInterface& stateStack);
     ~PlayState();
 
     void handleEvent(sf::Event event);

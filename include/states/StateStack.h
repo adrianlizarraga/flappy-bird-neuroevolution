@@ -2,10 +2,11 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <deque>
+#include "states/StateStackInterface.h"
 
 class State;
 
-class StateStack {
+class StateStack: public StateStackInterface {
 private:
     std::deque<std::shared_ptr<State> > m_states;
 public:

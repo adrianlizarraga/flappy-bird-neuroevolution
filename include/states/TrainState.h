@@ -43,7 +43,7 @@ private:
 
     int selectBird();
 public:
-    TrainState(int width, int height);
+    TrainState(int width, int height, StateStackInterface& stateStack);
     ~TrainState();
 
     void handleEvent(sf::Event event);

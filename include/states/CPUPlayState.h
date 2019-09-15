@@ -31,7 +31,7 @@ private:
     void cleanupPipes();
     void reset();
 public:
-    CPUPlayState(int width, int height);
+    CPUPlayState(int width, int height, StateStackInterface& stateStack);
     ~CPUPlayState();
 
     void handleEvent(sf::Event event);
