@@ -1,4 +1,5 @@
 #include "states/StateStack.h"
+#include "states/State.h"
 
 StateStack::StateStack() {
 
@@ -15,13 +16,17 @@ void StateStack::pop() {
 void StateStack::handleEvent(sf::Event event) {
     
     // Only the state at the top of the stack should handle events.
-    this->m_states.back()->handleEvent(event);
+    if (!this->m_states.empty()) {
+        this->m_states.back()->handleEvent(event);
+    }
 }
 
 void StateStack::update(float elapsed) {
 
     // Only the state at the top of the stack should be updated.
-    this->m_states.back()->update(elapsed);
+    if (!this->m_states.empty()) {
+        this->m_states.back()->update(elapsed);
+    }
 }
 
 void StateStack::draw(sf::RenderWindow& window) const {

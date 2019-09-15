@@ -2,7 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <deque>
-#include "states/State.h"
+
+class State;
 
 class StateStack {
 private:
