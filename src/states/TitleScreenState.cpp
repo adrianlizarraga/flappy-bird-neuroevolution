@@ -1,6 +1,8 @@
 #include "states/TitleScreenState.h"
 #include "states/PlayState.h"
 #include "asset/AssetManager.h"
+#include <cmath>
+#include <iostream>
 
 TitleScreenState::TitleScreenState(int width, int height, StateStackInterface& stateStack)
     : State(stateStack), m_width(width), m_height(height),
@@ -32,7 +34,27 @@ void TitleScreenState::handleEvent(sf::Event event) {
 }
 
 void TitleScreenState::update(float elapsed) {
-    // Do nothing for now.
+    float minScale = 0.9f;
+    float maxScale = 1.1f;
+    float periodSec = 1.4f;
+    float percent = m_timeElapsed / periodSec;
+
+    // Pulse text (grow)
+    if (percent <= 0.5f) {
+        float scale = (1.f - percent * 2.f) * minScale + percent * 2.f * maxScale;
+
+        m_title.setScale(scale, scale);
+    }
+
+    // Pulse text (shrink)
+    else {
+        float scale = (1.f - (percent - 0.5f) * 2.f) * maxScale + (percent - 0.5f) * 2.f * minScale;
+
+        m_title.setScale(scale, scale);
+    }
+
+    // Only keep track of a period's worth of time...
+    m_timeElapsed = std::fmod(m_timeElapsed + elapsed, periodSec);
 }
 
 void TitleScreenState::draw(sf::RenderWindow& window) const {

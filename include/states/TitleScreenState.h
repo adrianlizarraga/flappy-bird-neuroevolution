@@ -14,6 +14,8 @@ private:
     Ground m_ground;
     Background m_background;
 
+    float m_timeElapsed = 0.f;
+
 public:
     TitleScreenState(int width, int height, StateStackInterface& stateStack);
     ~TitleScreenState();
