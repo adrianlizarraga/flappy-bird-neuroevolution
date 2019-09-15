@@ -1,5 +1,6 @@
 #include "states/TitleScreenState.h"
 #include "states/PlayState.h"
+#include "states/FadeState.h"
 #include "asset/AssetManager.h"
 #include <cmath>
 #include <iostream>
@@ -28,8 +29,11 @@ TitleScreenState::~TitleScreenState() {}
 
 void TitleScreenState::handleEvent(sf::Event event) {
     if (event.type == sf::Event::KeyPressed) {
-        m_stateStack.pop();
-        m_stateStack.push(std::make_shared<PlayState>(m_width, m_height, m_stateStack));
+        m_stateStack.push(std::make_shared<FadeState>(m_width, m_height, m_stateStack, sf::Color(255, 255, 255), 0, 255, 0.35f, 
+        [this]() {
+            this->m_stateStack.pop();
+            this->m_stateStack.push(std::make_shared<PlayState>(m_width, m_height, m_stateStack));
+        }));
     }
 }
 
