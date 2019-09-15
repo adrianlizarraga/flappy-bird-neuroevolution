@@ -29,10 +29,22 @@ TitleScreenState::~TitleScreenState() {}
 
 void TitleScreenState::handleEvent(sf::Event event) {
     if (event.type == sf::Event::KeyPressed) {
-        m_stateStack.push(std::make_shared<FadeState>(m_width, m_height, m_stateStack, sf::Color(255, 255, 255), 0, 255, 0.35f, 
+
+        // Fade to white
+        m_stateStack.push(std::make_shared<FadeState>(m_width, m_height, m_stateStack, sf::Color(255, 255, 255), 0, 255, 0.6f, 
         [this]() {
+
+            // Remove this state from the stack.
             this->m_stateStack.pop();
+
+            // Push the play state into the stack.
             this->m_stateStack.push(std::make_shared<PlayState>(m_width, m_height, m_stateStack));
+
+            // Fade from white into the play state.
+            this->m_stateStack.push(std::make_shared<FadeState>(m_width, m_height, m_stateStack, sf::Color(255, 255, 255), 255, 0, 0.6f,
+            []() {
+               // Do nothing.
+            }));
         }));
     }
 }
