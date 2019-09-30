@@ -23,10 +23,12 @@ add_executable(flappy
     src/entity/Background.cpp
     src/entity/Pipe.cpp
     src/asset/AssetManager.cpp
+    src/gui/Button.cpp
     src/Game.cpp
     src/Menu.cpp
     src/states/TitleScreenState.cpp
     src/states/FadeState.cpp
+    src/states/ModeSelectState.cpp
     src/states/StateStack.cpp
     src/states/PlayState.cpp
     src/states/CPUPlayState.cpp

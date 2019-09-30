@@ -9,6 +9,11 @@ void StateStack::push(std::shared_ptr<State> state) {
     this->m_states.push_back(state);
 }
 
+void StateStack::replaceTop(std::shared_ptr<State> state) {
+    this->pop();
+    this->push(state);
+}
+
 void StateStack::pop() {
     this->m_states.pop_back();
 }

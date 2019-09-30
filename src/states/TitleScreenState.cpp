@@ -1,5 +1,5 @@
 #include "states/TitleScreenState.h"
-#include "states/PlayState.h"
+#include "states/ModeSelectState.h"
 #include "states/FadeState.h"
 #include "asset/AssetManager.h"
 #include <cmath>
@@ -28,7 +28,7 @@ TitleScreenState::TitleScreenState(int width, int height, StateStackInterface& s
 TitleScreenState::~TitleScreenState() {}
 
 void TitleScreenState::handleEvent(sf::Event event) {
-    if (event.type == sf::Event::KeyPressed) {
+    if (event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed) {
 
         // Fade to white
         m_stateStack.push(std::make_shared<FadeState>(m_width, m_height, m_stateStack, sf::Color(255, 255, 255), 0, 255, 0.6f, 
@@ -37,10 +37,10 @@ void TitleScreenState::handleEvent(sf::Event event) {
             // Remove this state from the stack.
             this->m_stateStack.pop();
 
-            // Push the play state into the stack.
-            this->m_stateStack.push(std::make_shared<PlayState>(m_width, m_height, m_stateStack));
+            // Push the mode selection state into the stack.
+            this->m_stateStack.push(std::make_shared<ModeSelectState>(m_width, m_height, m_stateStack));
 
-            // Fade from white into the play state.
+            // Fade from white into the mode selection state.
             this->m_stateStack.push(std::make_shared<FadeState>(m_width, m_height, m_stateStack, sf::Color(255, 255, 255), 255, 0, 0.6f,
             []() {
                // Do nothing.
